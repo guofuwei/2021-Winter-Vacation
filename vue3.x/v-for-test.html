@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="http://unpkg.com/vue@next"></script>
+    <title>v-for-test</title>
+</head>
+
+<body>
+    <div id="app">
+        <!-- <ol>
+            <li v-for="(site,index) in sites">
+                {{index}}-{{ site.text }}
+            </li>
+        </ol> -->
+        <ul>
+            <template v-for="site in sites">
+                <li>{{site.text}}</li>
+            </template>
+        </ul>
+        <ul>
+            <li v-for="(value,key,index) in object">
+                {{index}}:{{key}}--{{value}}
+            </li>
+        </ul>
+    </div>
+</body>
+
+<script>
+    const app = {
+        data() {
+            return {
+                sites: [{
+                        "text": "Google"
+                    },
+                    {
+                        "text": "Baidu"
+                    },
+                    {
+                        "text": "Taobao"
+                    }
+                ],
+                object: {
+                    name: '菜鸟教程',
+                    url: 'http://www.runoob.com',
+                    slogan: '学的不仅是技术，更是梦想！'
+                }
+            }
+        }
+    }
+    Vue.createApp(app).mount("#app")
+</script>
+
+</html>

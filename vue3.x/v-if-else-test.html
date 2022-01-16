@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="http://unpkg.com/vue@next"></script>
+    <title>v-if-else-test</title>
+</head>
+
+<body>
+    <div id="app">
+        <p v-if="seen">
+            现在你看见我了
+        </p>
+        <template v-if="seen2">
+            <h1>网站</h1>
+            <p>Google</p>
+            <p>Facebook</p>
+            <p>Twitter</p>
+        </template>
+        <p @click="hiddenWebsite">点我隐藏网站</p>
+        <p @click="visibleWebsite">点我显示网站</p>
+        <div v-if="Math.random()>0.5">随机数大于0.5</div>
+        <div v-else-if="Math.random()<0">随机数小于0</div>
+        <div v-else="0<=Math.random()<=0.5">随机数在0和0.5之间</div>
+        <p v-show="ok">v-show命令也可以用来控制显示与否</p>
+    </div>
+</body>
+
+<script>
+    const app = {
+        data() {
+            return {
+                seen: true,
+                seen2: true,
+                ok: true,
+            }
+        },
+        methods: {
+            hiddenWebsite() {
+                this.seen2 = false
+            },
+            visibleWebsite() {
+                this.seen2 = true
+            }
+        }
+    }
+    Vue.createApp(app).mount("#app")
+</script>
+
+</html>

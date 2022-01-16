@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://unpkg.com/vue@next"></script>
+    <title>formdata-test2</title>
+</head>
+
+<body>
+    <div id="app">
+        <p>单选框:</p>
+        <input type="radio" :value="radioVal" id="radio1" v-model="radioChecked">
+        <label for="radio1">runoob</label>
+        <input type="radio" :value="radioVal2" id="radio2" v-model="radioChecked">
+        <label for="radio2">google</label>
+        <p>选中的值为{{radioChecked}}</p>
+
+        <p>单个复选框:</p>
+        <input type="checkbox" id="checkbox" v-model="checked" true-value="a" false-value="b">
+        <label for="checkbox">{{checked}}</label>
+
+        <p>多个复选框</p>
+        <input type="checkbox" value="Runoob" id="runoob" v-model="checkedNames">
+        <label for="runoob">Runoob</label>
+        <input type="checkbox" value="Google" id="google" v-model="checkedNames">
+        <label for="google">Google</label>
+        <input type="checkbox" value="Taobao" id="taobao" v-model="checkedNames">
+        <label for="taobao">Taobao</label>
+        <br>
+        <p>选择的值为{{checkedNames}}</p>
+
+        <select name="fruit" v-model="selected" multiple>
+            <option value="">选择一个网站</option>
+            <option :value="Val1">Runoob</option>
+            <option value="www.google.com">Google</option>
+        </select>
+        <p>选择的网站为:{{selected}}</p>
+    </div>
+</body>
+
+<script>
+    const app = Vue.createApp({
+        data() {
+            return {
+                radioChecked: "Runoob",
+                radioVal: "Runoob",
+                radioVal2: "Google",
+                checked: false,
+                checkedNames: [],
+                selected: "",
+                Val1: "www.baidu.com"
+            }
+        },
+    }).mount("#app")
+</script>
+
+</html>

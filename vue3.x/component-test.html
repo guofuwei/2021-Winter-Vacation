@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="http://unpkg.com/vue@next"></script>
+    <title>component-test</title>
+</head>
+
+<body>
+    <div id="app">
+        <runoob></runoob>
+        <!-- <runoobA></runoobA> -->
+        <button-counter></button-counter>
+        <button-counter></button-counter>
+        <button-counter></button-counter>
+        <button-counter></button-counter>
+    </div>
+    <div id="app2">
+        <runoob-a></runoob-a>
+    </div>
+</body>
+
+<script>
+    const app = Vue.createApp({})
+
+    app.component("runoob", {
+        template: `<h1>自定义组件</h1>`
+    })
+    app.component("button-counter", {
+        data() {
+            return {
+                count: 0
+            }
+        },
+        template: `
+        <button @click="count++">
+            点了{{ count }}次!
+        </button><br>`
+    })
+
+    let runoobA = {
+        template: '<h1>自定义组件2</h1>'
+    }
+    const app2 = Vue.createApp({
+        components: {
+            "runoob-a": runoobA
+        }
+    })
+    app.mount("#app")
+    app2.mount("#app2")
+</script>
+
+</html>

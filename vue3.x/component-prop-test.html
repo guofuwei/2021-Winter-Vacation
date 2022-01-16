@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="http://unpkg.com/vue@next"></script>
+    <title>component-prop-test</title>
+</head>
+
+<body>
+    <div id="app">
+        <site-name title="Google"></site-name>
+        <site-name title="Runoob"></site-name>
+        <site-name title="Taobao"></site-name>
+        <site-info v-for="site in sites" :title="site.title" :id="site.id"></site-info>
+    </div>
+</body>
+
+<script>
+    const Site = {
+        data() {
+            return {
+                sites: [{
+                        id: 1,
+                        title: "Google"
+                    },
+                    {
+                        id: 2,
+                        title: "Runoob"
+                    },
+                    {
+                        id: 3,
+                        title: "Taobao"
+                    }
+                ]
+            }
+        }
+    }
+    const app = Vue.createApp(Site)
+
+    app.component("site-name", {
+        props: ["title"],
+        template: `<h4>{{title}}</h4>`
+    })
+    app.component("site-info", {
+        props: ["id", "title"],
+        template: `<h4>{{id}}---{{title}}</h4>`
+    })
+    app.mount("#app")
+</script>
+
+</html>

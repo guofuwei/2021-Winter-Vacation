@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://unpkg.com/vue@next"></script>
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="app">
+        <button @click="greet">点我 </button>
+        <button @click="say('hi'),hello('world')">点我哟</button>
+        <input type="text" @keyup.enter="dosomething">
+        <div @click.ctrl.exact="dosomething">Do Something</div>
+    </div>
+</body>
+
+<script>
+    const app = {
+        data() {
+            return {
+                name: "runoob"
+            }
+        },
+        methods: {
+            greet: function (event) {
+                console.log("Hello " + this.name + "!")
+                if (event) {
+                    console.log(event.target.tagName)
+                }
+            },
+            say: function (msg) {
+                console.log("The msg is " + msg)
+            },
+            hello: function (name) {
+                console.log("Hello " + name)
+            },
+            dosomething: function () {
+                console.log("I am doing something")
+            }
+        },
+    }
+    Vue.createApp(app).mount("#app")
+</script>
+
+</html>

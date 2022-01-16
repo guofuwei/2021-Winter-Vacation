@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://unpkg.com/vue@next"></script>
+    <title>class-test</title>
+</head>
+
+<body>
+    <div id="app">
+        <div :class="{'active':isActive,'text-danger':hasError}"></div>
+        <button id="changeColor" @click="changeColor">改变颜色</button>
+        <hr>
+        <div :class="classObject"></div>
+        <div class="static" :class="[activeClass,errorClass]"></div>
+        <div class="static" :class="[isActive ? activeClass : '',errClass]"></div>
+    </div>
+</body>
+
+<style>
+    .active {
+        width: 200px;
+        height: 200px;
+        background: green;
+    }
+
+    .text-danger {
+        width: 200px;
+        height: 200px;
+        background: red;
+    }
+</style>
+
+<script>
+    const app = {
+        data() {
+            return {
+                isActive: true,
+                hasError: false,
+            }
+        },
+        methods: {
+            changeColor: function () {
+                if (this.isActive) {
+                    this.isActive = false;
+                    this.hasError = true;
+                } else {
+                    this.isActive = true;
+                    this.hasError = false;
+                }
+            }
+        },
+    }
+    vm = Vue.createApp(app).mount("#app")
+</script>
+
+</html>
