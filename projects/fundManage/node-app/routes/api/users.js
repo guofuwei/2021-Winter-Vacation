@@ -167,7 +167,8 @@ router.get("/current", passport.authenticate("jwt", {
 }), function (req, res) {
     res.json({
         status: 200,
-        msg: {
+        msg: "ok",
+        data: {
             id: req.user.id,
             name: req.user.name,
             email: req.user.email,
