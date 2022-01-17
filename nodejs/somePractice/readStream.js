@@ -11,6 +11,9 @@ readStream.on("data", function (chunk) {
 readStream.on("end", function () {
     console.log(data);
 })
+readStream.on("finish",function(){
+    console.log("readStream has finished")
+})
 readStream.on("error", function (err) {
     console.log(err.stack);
 })
