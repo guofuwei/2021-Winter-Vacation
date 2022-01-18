@@ -8,7 +8,7 @@ create table usertable(
     name  varchar(50) not null,
     password varchar(100) not null,
     email varchar(100) not null,
-    avatar varchar(100) not null,
+    avatar varchar(100),
     identify varchar(50) not null,
     date timestamp not null DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (id)

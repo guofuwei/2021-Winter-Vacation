@@ -33,7 +33,7 @@ router.post("/register", function (req, res) {
     let password = req.body.password
     let email = req.body.email
     let identify = req.body.identify
-    if (!name || !password || !email || !avatar || !identify) {
+    if (!name || !password || !email || !identify) {
         res.status(200).json({
             status: 401,
             msg: "非法请求"
@@ -136,6 +136,7 @@ router.post("/login", function (req, res) {
                     id: ret[0].id,
                     name: ret[0].name,
                     email: email,
+                    avatar: ret[0].avatar,
                     identify: ret[0].identify
                 },
                 config.secretKey, {
