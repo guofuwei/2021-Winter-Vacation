@@ -81,11 +81,12 @@ router.get("/", passport.authenticate("jwt", {
             })
             return
         }
-        res.json({
-            status: 200,
-            msg: "ok",
-            data: ret
-        })
+        // res.json({
+        //     status: 200,
+        //     msg: "ok",
+        //     data: ret
+        // })
+        res.json(ret)
     })
 })
 
