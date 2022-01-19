@@ -6,7 +6,7 @@ import NotFound from "./views/404.vue"
 import Login from "./views/login.vue"
 import Home from "./views/home.vue"
 import InfoShow from "./views/infoshow.vue"
-import FoundList from "./views/foundList.vue"
+import FundList from "./views/fundList.vue"
 
 
 const originalPush = VueRouter.prototype.push
@@ -38,14 +38,14 @@ const routes = [{
         component: Home
       },
       {
-        path: "/foundlist",
-        name: "foundlist",
-        component: FoundList
-      },
-      {
         path: "/infoshow",
         name: "infoshow",
         component: InfoShow
+      },
+      {
+        path: "/fundlist",
+        name: "fundlist",
+        component: FundList
       },
     ]
   },

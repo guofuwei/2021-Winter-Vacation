@@ -16,7 +16,6 @@
     "bcrypt": "^5.0.1",
     "body-parser": "^1.19.1",
     "concurrently": "^7.0.0",
-    "element-ui": "^2.15.6",
     "express": "^4.17.2",
     "express-jwt": "^6.1.0",
     "gravatar": "^1.8.2",
