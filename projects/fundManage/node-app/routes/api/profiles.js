@@ -77,7 +77,7 @@ router.get("/", passport.authenticate("jwt", {
             res.json({
                 status: 200,
                 msg: "no",
-                data: "没有任何内容"
+                data: []
             })
             return
         }
