@@ -6,7 +6,11 @@ import NotFound from "./views/404.vue"
 import Login from "./views/login.vue"
 import Home from "./views/home.vue"
 import InfoShow from "./views/infoshow.vue"
-import FundList from "./views/fundList.vue"
+import ActList from "./views/actList.vue"
+import MyActList from "./views/myActList.vue"
+import AddAct from "./views/addAct.vue"
+import AppealList from "./views/appealList.vue"
+
 
 
 // const originalPush = VueRouter.prototype.push
@@ -30,7 +34,7 @@ const routes = [{
     component: Index,
     children: [{
         path: '/',
-        component: Home
+        component: ActList
       },
       {
         path: '/home',
@@ -43,9 +47,24 @@ const routes = [{
         component: InfoShow
       },
       {
-        path: "/fundlist",
-        name: "fundlist",
-        component: FundList
+        path: "/actlist",
+        name: "actlist",
+        component: ActList
+      },
+      {
+        path: "/myactlist",
+        name: "myactlist",
+        component: MyActList
+      },
+      {
+        path: "/addact",
+        name: "addact",
+        component: AddAct
+      },
+      {
+        path: "/appeallist",
+        name: "appeallist",
+        component: AppealList
       },
     ]
   },

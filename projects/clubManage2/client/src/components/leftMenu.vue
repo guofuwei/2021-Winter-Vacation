@@ -10,31 +10,32 @@
       >
         <router-link to="/home">
           <el-menu-item index="0">
-            <i class="fa fa-margin fa-server"></i>
             <span slot="title">首页</span>
           </el-menu-item>
         </router-link>
         <template v-for="item in items">
-          <el-submenu v-if="item.children" :index="item.path" :key="item.path">
-            <template slot="title">
-              <i :class="'fa fa-margin' + item.icon"></i>
+          <router-link :to="item.path" :key="item.name">
+            <el-menu-item :index="item.path">
               <span slot="title">{{ item.name }}</span>
-            </template>
-            <router-link
-              v-for="(citem, cindex) in item.children"
-              :to="citem.path"
-              :key="cindex"
-            >
-              <el-menu-item :index="citem.path">
-                <span slot="title">{{ citem.name }}</span>
-              </el-menu-item>
-            </router-link>
-          </el-submenu>
+            </el-menu-item>
+          </router-link>
+        </template>
+        <template>
+          <router-link to="/infoshow">
+            <el-menu-item index="1">
+              <span slot="title">个人信息</span>
+            </el-menu-item>
+          </router-link>
+          <router-link to="/infoshow">
+            <el-menu-item index="2">
+              <span slot="title">我的得分</span>
+            </el-menu-item>
+          </router-link>
         </template>
       </el-menu>
     </el-col>
   </el-row>
-</template>
+</template>                                                     
 
 
 
@@ -46,21 +47,71 @@ export default {
   name: "leftmenu",
   data() {
     return {
-      items: [
-        {
-          icon: "fa-money",
-          name: "资金管理",
-          path: "fund",
-          children: [{ path: "fundlist", name: "资金流水" }],
-        },
-        {
-          icon: "fa-asterisk",
-          name: "信息管理",
-          path: "info",
-          children: [{ path: "infoshow", name: "个人信息" }],
-        },
-      ],
+      items: "",
     };
+  },
+  created() {
+    this.getItems();
+  },
+  computed: {
+    user() {
+      return this.$store.getters.user;
+    },
+  },
+  methods: {
+    getItems() {
+      // console.log(this.user);
+      if (this.user.identity == "普通学生") {
+        this.items = [
+          {
+            name: "活动列表",
+            path: "actlist",
+          },
+          {
+            name: "我的活动",
+            path: "myactlist",
+          },
+        ];
+      } else if (this.user.identity == "部门管理员") {
+        this.items = [
+          {
+            name: "活动列表",
+            path: "actlist",
+          },
+          {
+            name: "我的活动",
+            path: "myactlist",
+          },
+          {
+            name: "活动申报",
+            path: "addact",
+          },
+          {
+            name: "申诉处理",
+            path: "appeallist",
+          },
+        ];
+      } else if (this.user.identity == "系统管理员") {
+        this.items = [
+          {
+            name: "活动列表",
+            path: "actlist",
+          },
+          {
+            name: "部门管理",
+            path: "info",
+          },
+          {
+            name: "评分规则",
+            path: "info",
+          },
+          {
+            name: "活动审核",
+            path: "info",
+          },
+        ];
+      }
+    },
   },
 };
 </script>

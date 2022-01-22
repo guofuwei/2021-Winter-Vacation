@@ -16,8 +16,8 @@ connection.connect(function (err) {
 
 module.exports = passport => {
     passport.use(new JwtStrategy(opts, function (jwt_payload, done) {
-        let sql = "select * from user_table where email=?"
-        connection.query(sql, jwt_payload.email, function (err, ret) {
+        let sql = "select * from user_table where studentid=?"
+        connection.query(sql, jwt_payload.studentid, function (err, ret) {
             if (err) {
                 console.log("passport jwt err:" + err)
                 return done(null, false)

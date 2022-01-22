@@ -18,9 +18,13 @@ require("./config/passport")(passport)
 const userRouter = require("./routes/api/user")
 app.use("/api/user", userRouter)
 
-// 注册profileRouter路由
-// const profileRouter = require("./routes/api/profile")
-// app.use("/api/profile", profileRouter)
+// 注册activityRouter路由
+const activityRouter = require("./routes/api/activity")
+app.use("/api/activity", activityRouter)
+
+// 注册appealRouter路由
+const appealRouter = require("./routes/api/appeal")
+app.use("/api/appeal", appealRouter)
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);

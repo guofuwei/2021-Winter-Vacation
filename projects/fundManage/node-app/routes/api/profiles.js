@@ -11,9 +11,6 @@ connection.connect(function (err) {
     }
 })
 const passport = require("passport")
-const {
-    route
-} = require("express/lib/application")
 
 // @route GET api/profile/test
 // @desc 返回是json数据
