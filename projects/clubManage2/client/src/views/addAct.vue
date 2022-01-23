@@ -202,32 +202,29 @@ export default {
             d = new Date(time);
             getData[i].starttime =
               d.getFullYear() +
-              "-" +
+              "年" +
               (d.getMonth() + 1) +
-              "-" +
+              "月" +
               d.getDate() +
-              " " +
+              "日 " +
               d.getHours() +
-              ":" +
+              "时" +
               d.getMinutes() +
-              ":" +
-              d.getSeconds();
+              "分";
             time = getData[i].endtime;
             d = new Date(time);
             getData[i].endtime =
               d.getFullYear() +
-              "-" +
+              "年" +
               (d.getMonth() + 1) +
-              "-" +
+              "月" +
               d.getDate() +
-              " " +
+              "日 " +
               d.getHours() +
-              ":" +
+              "时" +
               d.getMinutes() +
-              ":" +
-              d.getSeconds();
+              "分";
           }
-          // console.log(getData);
           this.allTableData = getData;
           this.filterTableData = getData;
           // 设置分页数据

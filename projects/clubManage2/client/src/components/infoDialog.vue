@@ -98,7 +98,7 @@ export default {
             .post(`/api/user/changeinfo`, this.formData)
             .then((res) => {
               this.$message({
-                message: "数据添加成功",
+                message: "信息修改成功",
                 type: "success",
               });
               this.dialog.show = false;

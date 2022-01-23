@@ -50,12 +50,19 @@
           <el-form-item prop="state" label="活动状态:">
             {{ formData.state }}
           </el-form-item>
+          <el-form-item
+            prop="isJoin"
+            label="参加状态:"
+            v-if="dialog.option == 'allList'"
+          >
+            {{ formData.isJoin }}
+          </el-form-item>
 
           <el-form-item class="text_right">
             <el-button
               type="success"
               @click="onSubmit('form')"
-              v-if="dialog.option == 'allList'"
+              v-if="dialog.option == 'allList' && formData.isJoin == '未参加'"
               >报 名</el-button
             >
             <el-button type="primary" @click="dialog.show = false"
@@ -95,9 +102,9 @@ export default {
     onSubmit(form) {
       this.$refs[form].validate((valid) => {
         if (valid) {
-          this.$axios.post(`/api/activity/add`, this.formData).then((res) => {
+          this.$axios.post(`api/activity/join`, this.formData).then((res) => {
             this.$message({
-              message: "数据添加成功",
+              message: "报名成功",
               type: "success",
             });
             this.dialog.show = false;

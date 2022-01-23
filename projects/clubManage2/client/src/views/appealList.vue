@@ -203,16 +203,15 @@ export default {
             d = new Date(time);
             getData[i].date =
               d.getFullYear() +
-              "-" +
+              "年" +
               (d.getMonth() + 1) +
-              "-" +
+              "月" +
               d.getDate() +
-              " " +
+              "日 " +
               d.getHours() +
-              ":" +
+              "时" +
               d.getMinutes() +
-              ":" +
-              d.getSeconds();
+              "分";
           }
           // console.log(getData);
           this.allTableData = getData;

@@ -42,7 +42,7 @@ axios.interceptors.response.use(response => {
 }, error => {
     // Do something with response error
     endloading();
-    Message.error(axios.response.data);
+    Message.error(error.response.data);
     // 清除token
     const {
         status

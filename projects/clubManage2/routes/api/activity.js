@@ -19,6 +19,7 @@ router.get("/test", function (req, res) {
     res.json({
         "msg": "/api/activity test"
     })
+
 })
 
 
@@ -48,6 +49,17 @@ router.post("/add", passport.authenticate("jwt", {
             })
             return
         }
+        // 将活动组织者添加到参与者中
+        sql = "insert into user_ref_act values(?,?)"
+        let actId = ret.insertId
+        connection.query(sql, [req.user.id, actId], function (err, ret) {
+            console.log("api/activity/add mysql addjoin err:" + err)
+            res.json({
+                status: 10002,
+                msg: "MYSQL activity addjoin err"
+            })
+            return
+        })
         res.json({
             status: 200,
             msg: "ok"
@@ -65,10 +77,10 @@ router.get("/", passport.authenticate("jwt", {
     let sql = "select * from activity_table;"
     connection.query(sql, function (err, ret) {
         if (err) {
-            console.log("api/activity/add mysql getall err")
+            console.log("api/activity/ mysql getall err")
             res.json({
                 status: 10002,
-                msg: "api/activity/add mysql getall err"
+                msg: "api/activity/ mysql getall err"
             })
             return
         }
@@ -80,10 +92,23 @@ router.get("/", passport.authenticate("jwt", {
             })
             return
         }
-        res.json({
-            status: 200,
-            msg: "ok",
-            data: ret
+        let data = ret
+        sql = "select act_id from user_ref_act where user_id=?;"
+        connection.query(sql, req.user.id, function (err, ret) {
+            if (err) {
+                console.log("api/activity/ mysql getactmsg err:" + err)
+                res.json({
+                    status: 10002,
+                    msg: "MYSQL activity getactmsg err"
+                })
+                return
+            }
+            res.json({
+                status: 200,
+                msg: "ok",
+                data: data,
+                actData: ret
+            })
         })
     })
 })
@@ -152,6 +177,38 @@ router.get("/myappact", passport.authenticate("jwt", {
             status: 200,
             msg: "ok",
             data: ret
+        })
+    })
+})
+
+
+// @route POST api/activity/join
+// @desc  创建信息接口
+// @access private
+router.post("/join", passport.authenticate("jwt", {
+    session: false
+}), function (req, res) {
+    // 检查字段是否为空 
+    if (!req.body.id) {
+        res.json({
+            status: 10001,
+            msg: "非法请求"
+        })
+    }
+    let sql = "insert into user_ref_act values(?,?);"
+    let sqlParams = [req.user.id, req.body.id]
+    connection.query(sql, sqlParams, function (err, ret) {
+        if (err) {
+            console.log("api/activity/join mysql add err:" + err)
+            res.json({
+                status: 10002,
+                msg: "MYSQL api/activity/join add err"
+            })
+            return
+        }
+        res.json({
+            status: 200,
+            msg: "ok"
         })
     })
 })

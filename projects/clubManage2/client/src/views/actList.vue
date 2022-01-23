@@ -78,14 +78,14 @@
         <el-table-column
           prop="starttime"
           label="活动开始时间"
-          width="210"
+          width="200"
           align="center"
         ></el-table-column>
 
         <el-table-column
           prop="endtime"
           label="活动结束时间"
-          width="210"
+          width="200"
           align="center"
         ></el-table-column>
 
@@ -181,12 +181,16 @@ export default {
       allTableData: [],
       formData: {
         id: "",
+        name: "",
         type: "",
-        mydescribe: "",
-        income: "",
-        expend: "",
-        cash: "",
-        remark: "",
+        initiator: "",
+        thedescribe: "",
+        starttime: "",
+        endtime: "",
+        place: "",
+        maxnum: "",
+        state: "",
+        isJoin: "",
       },
       dialog: {
         show: false,
@@ -204,38 +208,49 @@ export default {
       this.$axios
         .get("/api/activity/")
         .then((res) => {
+          let i = 0;
           let time = "";
           let d = null;
           let getData = res.data.data;
-          for (let i = 0; i < getData.length; i++) {
+          let actData = [];
+          // 处理actData
+          for (i = 0; i < res.data.actData.length; i++) {
+            actData.push(res.data.actData[i].act_id);
+          }
+          // console.log(actData);
+          for (i = 0; i < getData.length; i++) {
             time = getData[i].starttime;
             d = new Date(time);
             getData[i].starttime =
               d.getFullYear() +
-              "-" +
+              "年" +
               (d.getMonth() + 1) +
-              "-" +
+              "月" +
               d.getDate() +
-              " " +
+              "日 " +
               d.getHours() +
-              ":" +
+              "时" +
               d.getMinutes() +
-              ":" +
-              d.getSeconds();
+              "分";
             time = getData[i].endtime;
             d = new Date(time);
             getData[i].endtime =
               d.getFullYear() +
-              "-" +
+              "年" +
               (d.getMonth() + 1) +
-              "-" +
+              "月" +
               d.getDate() +
-              " " +
+              "日 " +
               d.getHours() +
-              ":" +
+              "时" +
               d.getMinutes() +
-              ":" +
-              d.getSeconds();
+              "分";
+            // 开始插入isJoin
+            if (actData.includes(getData[i].id)) {
+              getData[i].isJoin = "已参加";
+            } else {
+              getData[i].isJoin = "未参加";
+            }
           }
           // console.log(getData);
           this.allTableData = getData;
@@ -254,6 +269,7 @@ export default {
         option: "allList",
       };
       this.formData = {
+        id: row.id,
         name: row.name,
         type: row.type,
         initiator: row.initiator,
@@ -263,6 +279,7 @@ export default {
         place: row.place,
         maxnum: row.maxnum,
         state: row.state,
+        isJoin: row.isJoin,
       };
       // console.log(row.id);
     },
