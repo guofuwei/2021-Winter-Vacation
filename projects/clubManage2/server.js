@@ -26,6 +26,11 @@ app.use("/api/activity", activityRouter)
 const appealRouter = require("./routes/api/appeal")
 app.use("/api/appeal", appealRouter)
 
+
+// 注册scoreRouter路由
+const scoreRouter = require("./routes/api/score")
+app.use("/api/score", scoreRouter)
+
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
 })

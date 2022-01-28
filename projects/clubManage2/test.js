@@ -1,4 +1,14 @@
-var time = "2022-12-31T16:00:00.000Z";
-var d = new Date(time);
-var times = d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate() + ' ' + d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
-console.log(times)
+function StringFormat() {
+    if (arguments.length == 0)
+        return null;
+    var str = arguments[0];
+    for (var i = 1; i < arguments.length; i++) {
+        var re = new RegExp('\\{' + (i - 1) + '\\}', 'gm');
+        str = str.replace(re, arguments[i]);
+    }
+    return str;
+}
+
+console.log(StringFormat("123'{0}'", "4"))
+let data = "name1"
+console.log(data.indexOf(0 + 1))

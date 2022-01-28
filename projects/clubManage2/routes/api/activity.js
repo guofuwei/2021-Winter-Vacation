@@ -149,7 +149,7 @@ router.get("/myact", passport.authenticate("jwt", {
 
 
 // @route GET api/activity/:id
-// @desc  获取某人报名的所有信息
+// @desc  获取某人组织的所有活动
 // @access private
 router.get("/myappact", passport.authenticate("jwt", {
     session: false
@@ -212,6 +212,67 @@ router.post("/join", passport.authenticate("jwt", {
         })
     })
 })
+
+// @route POST api/activity/audit/pass
+// @desc  活动审核通过
+// @access private
+router.post("/audit/pass", passport.authenticate("jwt", {
+    session: false
+}), function (req, res) {
+    if (!req.body.id) {
+        res.json({
+            status: 10001,
+            msg: "非法请求"
+        })
+    }
+    let sql = "update activity_table set state='审核通过' where id=?;"
+    connection.query(sql, req.body.id, function (err, ret) {
+        if (err) {
+            console.log("api/activity/audit/pass mysql update err")
+            res.json({
+                status: 10002,
+                msg: "api/activity/audit/pass mysql update err"
+            })
+            return
+        }
+        res.json({
+            status: 200,
+            msg: "ok",
+        })
+    })
+})
+
+
+// @route POST api/activity/audit/fail
+// @desc  活动审核通过
+// @access private
+router.post("/audit/fail", passport.authenticate("jwt", {
+    session: false
+}), function (req, res) {
+    if (!req.body.id) {
+        res.json({
+            status: 10001,
+            msg: "非法请求"
+        })
+    }
+    let sql = "update activity_table set state='审核未通过' where id=?;"
+    connection.query(sql, req.body.id, function (err, ret) {
+        if (err) {
+            console.log("api/activity/audit/fail mysql update err")
+            res.json({
+                status: 10002,
+                msg: "api/activity/audit/fail mysql update err"
+            })
+            return
+        }
+        res.json({
+            status: 200,
+            msg: "ok",
+        })
+    })
+})
+
+
 
 
 

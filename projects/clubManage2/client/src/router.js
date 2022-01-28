@@ -10,6 +10,9 @@ import ActList from "./views/actList.vue"
 import MyActList from "./views/myActList.vue"
 import AddAct from "./views/addAct.vue"
 import AppealList from "./views/appealList.vue"
+import Manage from "./views/manage.vue"
+import ActAudit from "./views/actAudit.vue"
+import ScoreRule from "./views/scoreRule.vue"
 
 
 
@@ -65,6 +68,21 @@ const routes = [{
         path: "/appeallist",
         name: "appeallist",
         component: AppealList
+      },
+      {
+        path: "/manage",
+        name: "manage",
+        component: Manage
+      },
+      {
+        path: "/actAudit",
+        name: "actAudit",
+        component: ActAudit
+      },
+      {
+        path: "/scoreRule",
+        name: "scoreRule",
+        component: ScoreRule
       },
     ]
   },

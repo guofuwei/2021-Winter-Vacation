@@ -99,15 +99,15 @@ export default {
           },
           {
             name: "部门管理",
-            path: "info",
+            path: "manage",
           },
           {
             name: "评分规则",
-            path: "info",
+            path: "scoreRule",
           },
           {
             name: "活动审核",
-            path: "info",
+            path: "actAudit",
           },
         ];
       }

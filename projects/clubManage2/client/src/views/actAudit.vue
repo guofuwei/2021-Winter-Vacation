@@ -2,12 +2,28 @@
   <div class="fillContainer">
     <div>
       <el-form :inline="true" ref="add_data" :model="search_data">
-        <el-col :span="12">
+        <el-col :span="15">
           <div class="acttype">
-            <el-form-item label="活动类型">
+            <el-form-item label="类型选择">
               <el-select v-model="search_data.type" placeholder="活动类型">
                 <el-option
                   v-for="(formtype, index) in format_type_list"
+                  :key="index"
+                  :label="formtype"
+                  :value="formtype"
+                >
+                </el-option>
+              </el-select>
+            </el-form-item>
+
+            <el-form-item>
+              <el-select
+                v-model="search_data.audit"
+                placeholder="审核类型"
+                class="audit"
+              >
+                <el-option
+                  v-for="(formtype, index) in format_type_list2"
                   :key="index"
                   :label="formtype"
                   :value="formtype"
@@ -27,7 +43,7 @@
             </el-form-item>
           </div>
         </el-col>
-        <el-col :span="12">
+        <el-col :span="9">
           <div class="searchact">
             <el-form-item label="搜索活动">
               <el-input v-model="search_data.name"></el-input>
@@ -40,16 +56,6 @@
                 @click="handleNameSearch()"
               >
                 搜索
-              </el-button>
-            </el-form-item>
-            <el-form-item class="btnRight">
-              <el-button
-                type="primary"
-                size="common"
-                icon="view"
-                @click="handleAdd()"
-              >
-                申报活动
               </el-button>
             </el-form-item>
           </div>
@@ -68,10 +74,9 @@
           prop="name"
           label="活动名称"
           align="center"
-          width="140"
+          width="110"
         >
         </el-table-column>
-
         <el-table-column
           prop="type"
           label="活动类型"
@@ -79,26 +84,31 @@
           align="center"
         >
         </el-table-column>
-
         <el-table-column
-          prop="thedescribe"
-          label="活动描述"
-          width="140"
+          prop="initiator"
+          label="活动发起人"
+          width="120"
           align="center"
-        >
-        </el-table-column>
+        ></el-table-column>
 
         <el-table-column
           prop="starttime"
           label="活动开始时间"
-          width="210"
+          width="200"
           align="center"
         ></el-table-column>
 
         <el-table-column
           prop="endtime"
           label="活动结束时间"
-          width="210"
+          width="200"
+          align="center"
+        ></el-table-column>
+
+        <el-table-column
+          prop="place"
+          label="活动地点"
+          width="110"
           align="center"
         ></el-table-column>
 
@@ -109,10 +119,26 @@
           width="110"
         >
         </el-table-column>
+
+        <el-table-column
+          label="活动详情"
+          prop="operation"
+          align="center"
+          fixed="right"
+        >
+          <template slot-scope="scope">
+            <el-button
+              size="mini"
+              type="primary"
+              @click="getDetails(scope.$index, scope.row)"
+              >详情</el-button
+            >
+          </template>
+        </el-table-column>
       </el-table>
       <!-- 分页 -->
       <el-row v-if="tableData.length > 0">
-        <el-col :span="24">
+        <el-col :span="24" class="pageend">
           <div class="pagination">
             <el-pagination
               @size-change="handleSizeChange"
@@ -129,16 +155,16 @@
       </el-row>
       <el-card shadow="never" v-if="tableData.length == 0">暂无数据</el-card>
     </div>
-    <AddActDialog
+    <AllActDialog
       :dialog="dialog"
       @update="getProfile()"
       :formData="formData"
-    ></AddActDialog>
+    ></AllActDialog>
   </div>
 </template>
 
 <script>
-import AddActDialog from "../components/addActDialog.vue";
+import AllActDialog from "../components/allActDialog.vue";
 export default {
   name: "fundList",
   data() {
@@ -155,9 +181,11 @@ export default {
         "学术活动",
         "创新创业",
       ],
+      format_type_list2: ["全部", "已审核", "未审核"],
       search_data: {
         type: "",
         name: "",
+        audit: "",
       },
       filterTableData: [],
       paginations: {
@@ -171,17 +199,21 @@ export default {
       allTableData: [],
       formData: {
         id: "",
+        name: "",
         type: "",
-        mydescribe: "",
-        income: "",
-        expend: "",
-        cash: "",
-        remark: "",
+        initiator: "",
+        thedescribe: "",
+        starttime: "",
+        endtime: "",
+        place: "",
+        maxnum: "",
+        state: "",
+        isJoin: "",
       },
       dialog: {
         show: false,
         title: "",
-        option: "edit",
+        option: "",
       },
     };
   },
@@ -192,12 +224,19 @@ export default {
     getProfile() {
       // 获取表格数据
       this.$axios
-        .get("/api/activity/myappact")
+        .get("/api/activity/")
         .then((res) => {
+          let i = 0;
           let time = "";
           let d = null;
           let getData = res.data.data;
-          for (let i = 0; i < getData.length; i++) {
+          let actData = [];
+          // 处理actData
+          for (i = 0; i < res.data.actData.length; i++) {
+            actData.push(res.data.actData[i].act_id);
+          }
+          // console.log(actData);
+          for (i = 0; i < getData.length; i++) {
             time = getData[i].starttime;
             d = new Date(time);
             getData[i].starttime =
@@ -224,7 +263,14 @@ export default {
               "时" +
               d.getMinutes() +
               "分";
+            // 开始插入isJoin
+            if (actData.includes(getData[i].id)) {
+              getData[i].isJoin = "已参加";
+            } else {
+              getData[i].isJoin = "未参加";
+            }
           }
+          // console.log(getData);
           this.allTableData = getData;
           this.filterTableData = getData;
           // 设置分页数据
@@ -237,19 +283,21 @@ export default {
     getDetails(index, row) {
       this.dialog = {
         show: true,
-        title: "详情",
-        option: "addAct",
+        title: "审核",
+        option: "audit",
       };
       this.formData = {
-        name: "",
-        type: "",
+        id: row.id,
+        name: row.name,
+        type: row.type,
         initiator: row.initiator,
-        thedescribe: "",
-        starttime: "",
-        endtime: "",
-        place: "",
-        maxnum: "",
-        state: "",
+        thedescribe: row.thedescribe,
+        starttime: row.starttime,
+        endtime: row.endtime,
+        place: row.place,
+        maxnum: row.maxnum,
+        state: row.state,
+        isJoin: row.isJoin,
       };
       // console.log(row.id);
     },
@@ -265,19 +313,16 @@ export default {
     handleAdd() {
       this.dialog = {
         show: true,
-        title: "申报活动",
-        option: "addAct",
+        title: "添加资金信息",
+        option: "add",
       };
       this.formData = {
-        name: "",
         type: "",
-        initiator: this.allTableData[0].initiator,
-        thedescribe: "",
-        starttime: "",
-        endtime: "",
-        place: "",
-        maxnum: "",
-        state: "",
+        mydescribe: "",
+        income: "",
+        expend: "",
+        cash: "",
+        remark: "",
       };
     },
     handleSizeChange(page_size) {
@@ -314,11 +359,39 @@ export default {
     },
     handleTypeSearch() {
       // 筛选
-      if (this.search_data.type === "全部" || this.search_data.type === "") {
+      if (this.search_data.type === "") {
+        this.search_data.type = "全部";
+      }
+      if (this.search_data.audit === "") {
+        this.search_data.audit = "全部";
+      }
+
+      if (
+        this.search_data.type === "全部" &&
+        this.search_data.audit === "全部"
+      ) {
         this.allTableData = this.filterTableData;
       } else {
         this.allTableData = this.filterTableData.filter((item) => {
-          return item.type === this.search_data.type;
+          if (this.search_data.audit === "未审核") {
+            if (this.search_data.type === "全部") {
+              return item.state === "申报中";
+            } else {
+              return (
+                item.type === this.search_data.type && item.state === "申报中"
+              );
+            }
+          } else if (this.search_data.audit === "已审核") {
+            if (this.search_data.type === "全部") {
+              return item.state != "申报中";
+            } else {
+              return (
+                item.type === this.search_data.type && item.state != "申报中"
+              );
+            }
+          } else {
+            return item.type === this.search_data.type;
+          }
         });
       }
       // 分页数据的调用
@@ -343,17 +416,11 @@ export default {
     },
   },
   components: {
-    AddActDialog,
+    AllActDialog,
   },
 };
 </script>
 <style scoped>
-.title {
-  margin-left: 10px;
-  font-size: 26px;
-  font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB",
-    "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
-}
 .fillcontain {
   width: 100%;
   height: 100%;
@@ -361,7 +428,6 @@ export default {
   box-sizing: border-box;
 }
 .btnRight {
-  margin-left: 30px;
   float: right;
 }
 .pagination {
@@ -393,5 +459,8 @@ export default {
   text-align: center;
   font-size: 20px;
   font-weight: bold;
+}
+.audit {
+  margin-left: 10px;
 }
 </style>

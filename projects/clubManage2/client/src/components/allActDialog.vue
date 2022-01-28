@@ -65,7 +65,28 @@
               v-if="dialog.option == 'allList' && formData.isJoin == '未参加'"
               >报 名</el-button
             >
-            <el-button type="primary" @click="dialog.show = false"
+            <el-button
+              type="success"
+              @click="pass('form')"
+              v-if="dialog.option == 'audit'"
+              >审核通过</el-button
+            >
+            <el-button
+              type="danger"
+              @click="fail('form')"
+              v-if="dialog.option == 'audit'"
+              >驳回</el-button
+            >
+            <el-button
+              type="primary"
+              v-if="dialog.option == 'audit'"
+              @click="dialog.show = false"
+              >取 消</el-button
+            >
+            <el-button
+              type="primary"
+              @click="dialog.show = false"
+              v-if="dialog.option != 'audit'"
               >确 定</el-button
             >
           </el-form-item>
@@ -110,6 +131,38 @@ export default {
             this.dialog.show = false;
             this.$emit("update");
           });
+        }
+      });
+    },
+    pass(form) {
+      this.$refs[form].validate((valid) => {
+        if (valid) {
+          this.$axios
+            .post(`api/activity/audit/pass`, this.formData)
+            .then((res) => {
+              this.$message({
+                message: "提交成功",
+                type: "success",
+              });
+              this.dialog.show = false;
+              this.$emit("update");
+            });
+        }
+      });
+    },
+    fail(form) {
+      this.$refs[form].validate((valid) => {
+        if (valid) {
+          this.$axios
+            .post(`api/activity/audit/fail`, this.formData)
+            .then((res) => {
+              this.$message({
+                message: "提交成功",
+                type: "success",
+              });
+              this.dialog.show = false;
+              this.$emit("update");
+            });
         }
       });
     },

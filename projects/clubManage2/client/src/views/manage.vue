@@ -314,7 +314,7 @@ export default {
     },
     handleTypeSearch() {
       // 筛选
-      if (this.search_data.type === "全部" || this.search_data.type === "") {
+      if (this.search_data.type === "全部") {
         this.allTableData = this.filterTableData;
       } else {
         this.allTableData = this.filterTableData.filter((item) => {

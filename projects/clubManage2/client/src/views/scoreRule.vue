@@ -2,10 +2,10 @@
   <div class="fillContainer">
     <div>
       <el-form :inline="true" ref="add_data" :model="search_data">
-        <el-col :span="12">
+        <el-col :span="24">
           <div class="acttype">
-            <el-form-item label="活动类型">
-              <el-select v-model="search_data.type" placeholder="活动类型">
+            <el-form-item label="大类选择">
+              <el-select v-model="search_data.Name" placeholder="评分大类">
                 <el-option
                   v-for="(formtype, index) in format_type_list"
                   :key="index"
@@ -15,41 +15,15 @@
                 </el-option>
               </el-select>
             </el-form-item>
+
             <el-form-item>
               <el-button
                 type="primary"
                 size="common"
                 icon="search"
-                @click="handleTypeSearch()"
+                @click="handleNameFilter()"
               >
                 筛选
-              </el-button>
-            </el-form-item>
-          </div>
-        </el-col>
-        <el-col :span="12">
-          <div class="searchact">
-            <el-form-item label="搜索活动">
-              <el-input v-model="search_data.name"></el-input>
-            </el-form-item>
-            <el-form-item>
-              <el-button
-                type="primary"
-                size="common"
-                icon="search"
-                @click="handleNameSearch()"
-              >
-                搜索
-              </el-button>
-            </el-form-item>
-            <el-form-item class="btnRight">
-              <el-button
-                type="primary"
-                size="common"
-                icon="view"
-                @click="handleAdd()"
-              >
-                申报活动
               </el-button>
             </el-form-item>
           </div>
@@ -65,54 +39,38 @@
         border
       >
         <el-table-column
+          prop="Name"
+          label="评分大类"
+          width="300"
+          align="center"
+        ></el-table-column>
+
+        <el-table-column
           prop="name"
-          label="活动名称"
-          align="center"
-          width="140"
-        >
-        </el-table-column>
-
-        <el-table-column
-          prop="type"
-          label="活动类型"
-          width="140"
-          align="center"
-        >
-        </el-table-column>
-
-        <el-table-column
-          prop="thedescribe"
-          label="活动描述"
-          width="140"
-          align="center"
-        >
-        </el-table-column>
-
-        <el-table-column
-          prop="starttime"
-          label="活动开始时间"
-          width="210"
+          label="评分小类"
+          width="300"
           align="center"
         ></el-table-column>
 
         <el-table-column
-          prop="endtime"
-          label="活动结束时间"
-          width="210"
+          label="评分详情"
+          prop="operation"
           align="center"
-        ></el-table-column>
-
-        <el-table-column
-          label="活动状态"
-          prop="state"
-          align="center"
-          width="110"
+          width="300"
         >
+          <template slot-scope="scope">
+            <el-button
+              size="mini"
+              type="primary"
+              @click="getDetails(scope.$index, scope.row)"
+              >详情</el-button
+            >
+          </template>
         </el-table-column>
       </el-table>
       <!-- 分页 -->
       <el-row v-if="tableData.length > 0">
-        <el-col :span="24">
+        <el-col :span="24" class="pageend">
           <div class="pagination">
             <el-pagination
               @size-change="handleSizeChange"
@@ -129,35 +87,23 @@
       </el-row>
       <el-card shadow="never" v-if="tableData.length == 0">暂无数据</el-card>
     </div>
-    <AddActDialog
+    <ScoreSetDialog
       :dialog="dialog"
       @update="getProfile()"
       :formData="formData"
-    ></AddActDialog>
+    ></ScoreSetDialog>
   </div>
 </template>
 
 <script>
-import AddActDialog from "../components/addActDialog.vue";
+import ScoreSetDialog from "../components/scoreSetDialog.vue";
 export default {
   name: "fundList",
   data() {
     return {
-      format_type_list: [
-        "全部",
-        "思政教育",
-        "国防教育",
-        "安全教育",
-        "社会实践",
-        "志愿服务",
-        "文化活动",
-        "体育活动",
-        "学术活动",
-        "创新创业",
-      ],
+      format_type_list: ["全部", "德育", "智育", "体育", "美育", "劳育"],
       search_data: {
-        type: "",
-        name: "",
+        Name: "",
       },
       filterTableData: [],
       paginations: {
@@ -170,19 +116,21 @@ export default {
       tableData: [],
       allTableData: [],
       formData: {
-        id: "",
-        type: "",
-        mydescribe: "",
-        income: "",
-        expend: "",
-        cash: "",
-        remark: "",
+        Name: "",
+        name: "",
+        scoreType: "",
+        upperLimit: "",
       },
       dialog: {
         show: false,
         title: "",
-        option: "edit",
+        option: "",
       },
+      typeList: [
+        "分三档:1分-2分-3分",
+        "分三档:1分-3分-5分",
+        "分五档:1分-2分-3分-4分-5分",
+      ],
     };
   },
   created() {
@@ -192,39 +140,10 @@ export default {
     getProfile() {
       // 获取表格数据
       this.$axios
-        .get("/api/activity/myappact")
+        .get("/api/score/desc")
         .then((res) => {
-          let time = "";
-          let d = null;
           let getData = res.data.data;
-          for (let i = 0; i < getData.length; i++) {
-            time = getData[i].starttime;
-            d = new Date(time);
-            getData[i].starttime =
-              d.getFullYear() +
-              "年" +
-              (d.getMonth() + 1) +
-              "月" +
-              d.getDate() +
-              "日 " +
-              d.getHours() +
-              "时" +
-              d.getMinutes() +
-              "分";
-            time = getData[i].endtime;
-            d = new Date(time);
-            getData[i].endtime =
-              d.getFullYear() +
-              "年" +
-              (d.getMonth() + 1) +
-              "月" +
-              d.getDate() +
-              "日 " +
-              d.getHours() +
-              "时" +
-              d.getMinutes() +
-              "分";
-          }
+          // console.log(getData);
           this.allTableData = getData;
           this.filterTableData = getData;
           // 设置分页数据
@@ -237,19 +156,15 @@ export default {
     getDetails(index, row) {
       this.dialog = {
         show: true,
-        title: "详情",
-        option: "addAct",
+        title: "审核",
+        option: "audit",
       };
       this.formData = {
-        name: "",
-        type: "",
-        initiator: row.initiator,
-        thedescribe: "",
-        starttime: "",
-        endtime: "",
-        place: "",
-        maxnum: "",
-        state: "",
+        id: row.id,
+        Name: row.Name,
+        name: row.name,
+        scoreType: this.typeList[row.scoreType[row.id]],
+        upperLimit: row.upperLimit,
       };
       // console.log(row.id);
     },
@@ -265,19 +180,16 @@ export default {
     handleAdd() {
       this.dialog = {
         show: true,
-        title: "申报活动",
-        option: "addAct",
+        title: "添加资金信息",
+        option: "add",
       };
       this.formData = {
-        name: "",
         type: "",
-        initiator: this.allTableData[0].initiator,
-        thedescribe: "",
-        starttime: "",
-        endtime: "",
-        place: "",
-        maxnum: "",
-        state: "",
+        mydescribe: "",
+        income: "",
+        expend: "",
+        cash: "",
+        remark: "",
       };
     },
     handleSizeChange(page_size) {
@@ -312,25 +224,13 @@ export default {
         return index < this.paginations.page_size;
       });
     },
-    handleTypeSearch() {
+    handleNameFilter() {
       // 筛选
-      if (this.search_data.type === "全部" || this.search_data.type === "") {
+      if (this.search_data.Name === "" || this.search_data.Name === "全部") {
         this.allTableData = this.filterTableData;
       } else {
         this.allTableData = this.filterTableData.filter((item) => {
-          return item.type === this.search_data.type;
-        });
-      }
-      // 分页数据的调用
-      this.setPaginations();
-    },
-    handleNameSearch() {
-      // 筛选
-      if (this.search_data.name === "") {
-        this.allTableData = this.filterTableData;
-      } else {
-        this.allTableData = this.filterTableData.filter((item) => {
-          return item.name.indexOf(this.search_data.name) != -1;
+          return item.Name === this.search_data.Name;
         });
       }
       // 分页数据的调用
@@ -343,17 +243,11 @@ export default {
     },
   },
   components: {
-    AddActDialog,
+    ScoreSetDialog,
   },
 };
 </script>
 <style scoped>
-.title {
-  margin-left: 10px;
-  font-size: 26px;
-  font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB",
-    "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
-}
 .fillcontain {
   width: 100%;
   height: 100%;
@@ -361,7 +255,6 @@ export default {
   box-sizing: border-box;
 }
 .btnRight {
-  margin-left: 30px;
   float: right;
 }
 .pagination {
@@ -393,5 +286,8 @@ export default {
   text-align: center;
   font-size: 20px;
   font-weight: bold;
+}
+.audit {
+  margin-left: 10px;
 }
 </style>

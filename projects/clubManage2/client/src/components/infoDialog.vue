@@ -18,12 +18,28 @@
           <el-form-item prop="name" label="姓名:">
             <el-input type="name" v-model="formData.name"></el-input>
           </el-form-item>
+
           <el-form-item prop="faculty" label="院系:">
-            <el-input type="faculty" v-model="formData.faculty"></el-input>
+            <el-select v-model="formData.faculty" placeholder="请选择院系">
+              <el-option label="电子信息与通信学院" value="电子信息与通信学院">
+              </el-option>
+              <el-option label="光学与电子信息学院" value="光学与电子信息学院">
+              </el-option>
+              <el-option label="社会学院" value="社会学院"> </el-option>
+              <el-option label="管理学院" value="管理学院"> </el-option>
+            </el-select>
           </el-form-item>
 
           <el-form-item prop="classroom" label="班级:">
-            <el-input type="classroom" v-model="formData.classroom"></el-input>
+            <el-select v-model="formData.classroom" placeholder="请选择班级">
+              <el-option
+                v-for="(classroom, index) in classrooms_list"
+                :key="index"
+                :label="classroom"
+                :value="classroom"
+              >
+              </el-option>
+            </el-select>
           </el-form-item>
 
           <el-form-item prop="studentid" label="学号:">
@@ -84,6 +100,21 @@ export default {
         ],
       },
     };
+  },
+  computed: {
+    classrooms_list() {
+      if (this.formData.faculty == "电子信息与通信学院") {
+        return ["通信1801班", "通信1802班", "电信1903班", "电磁2001班"];
+      } else if (this.formData.faculty == "光学与电子信息学院") {
+        return ["光电1902班", "光电2011班", "光电2012班", "光电2013班"];
+      } else if (this.formData.faculty == "社会学院") {
+        return ["社科2001班", "社科2004班"];
+      } else if (this.formData.faculty == "管理学院") {
+        return ["管理2101班", "管工2001班"];
+      } else {
+        return [];
+      }
+    },
   },
   props: {
     dialog: Object,
