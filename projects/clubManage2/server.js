@@ -31,6 +31,10 @@ app.use("/api/appeal", appealRouter)
 const scoreRouter = require("./routes/api/score")
 app.use("/api/score", scoreRouter)
 
+// 注册manageRouter路由
+const manageRouter = require("./routes/api/manage")
+app.use("/api/manage", manageRouter)
+
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
 })

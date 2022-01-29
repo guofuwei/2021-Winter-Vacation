@@ -156,7 +156,7 @@ export default {
     getDetails(index, row) {
       this.dialog = {
         show: true,
-        title: "审核",
+        title: "详情",
         option: "audit",
       };
       this.formData = {

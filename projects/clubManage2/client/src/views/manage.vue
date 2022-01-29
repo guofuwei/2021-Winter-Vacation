@@ -65,49 +65,50 @@
         border
       >
         <el-table-column
-          prop="name"
-          label="活动名称"
+          prop="department"
+          label="职能部门"
           align="center"
-          width="140"
+          width="230"
         >
         </el-table-column>
 
         <el-table-column
-          prop="type"
-          label="活动类型"
-          width="140"
-          align="center"
-        >
-        </el-table-column>
-
-        <el-table-column
-          prop="thedescribe"
-          label="活动描述"
-          width="140"
+          prop="collage"
+          label="二级学院"
+          width="230"
           align="center"
         >
         </el-table-column>
 
         <el-table-column
-          prop="starttime"
-          label="活动开始时间"
-          width="210"
+          prop="depart_man_user_name_string"
+          label="部门管理员"
+          width="240"
+          align="center"
+        >
+        </el-table-column>
+
+        <el-table-column
+          prop="collage_man_user_name_string"
+          label="二级学院管理员"
+          width="240"
           align="center"
         ></el-table-column>
 
         <el-table-column
-          prop="endtime"
-          label="活动结束时间"
-          width="210"
+          prop="operation"
+          label="操作"
+          width="140"
           align="center"
-        ></el-table-column>
-
-        <el-table-column
-          label="活动状态"
-          prop="state"
-          align="center"
-          width="110"
         >
+          <template slot-scope="scope">
+            <el-button
+              size="mini"
+              type="primary"
+              @click="getDetails(scope.$index, scope.row)"
+              >编辑</el-button
+            >
+          </template>
         </el-table-column>
       </el-table>
       <!-- 分页 -->
@@ -192,39 +193,24 @@ export default {
     getProfile() {
       // 获取表格数据
       this.$axios
-        .get("/api/activity/myappact")
+        .get("api/manage/")
         .then((res) => {
-          let time = "";
-          let d = null;
           let getData = res.data.data;
           for (let i = 0; i < getData.length; i++) {
-            time = getData[i].starttime;
-            d = new Date(time);
-            getData[i].starttime =
-              d.getFullYear() +
-              "年" +
-              (d.getMonth() + 1) +
-              "月" +
-              d.getDate() +
-              "日 " +
-              d.getHours() +
-              "时" +
-              d.getMinutes() +
-              "分";
-            time = getData[i].endtime;
-            d = new Date(time);
-            getData[i].endtime =
-              d.getFullYear() +
-              "年" +
-              (d.getMonth() + 1) +
-              "月" +
-              d.getDate() +
-              "日 " +
-              d.getHours() +
-              "时" +
-              d.getMinutes() +
-              "分";
+            if (getData[i].depart_man_user_name.length > 0) {
+              getData[i].depart_man_user_name_string =
+                getData[i].depart_man_user_name.join(" ");
+            } else {
+              getData[i].depart_man_user_name_string = "暂无管理员";
+            }
+            if (getData[i].collage_man_user_name.length > 0) {
+              getData[i].collage_man_user_name_string =
+                getData[i].collage_man_user_name.join(" ");
+            } else {
+              getData[i].collage_man_user_name_string = "暂无管理员";
+            }
           }
+          console.log(getData);
           this.allTableData = getData;
           this.filterTableData = getData;
           // 设置分页数据
