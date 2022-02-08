@@ -88,11 +88,11 @@ export default {
             .then((res) => {
               // 登录成功
               // 拿到token
-              console.log(res);
+              // console.log(res);
               localStorage.setItem("eleToken", res.data.token);
               // 解析token
               const decoded = jwtDecode(res.data.token);
-              console.log(decoded);
+              // console.log(decoded);
               this.$store.dispatch("setAuthenticated", !this.isEmpty(decoded));
               this.$store.dispatch("setUser", decoded);
             })

@@ -9,6 +9,7 @@ connection.connect(function (err) {
     }
 })
 const passport = require("passport")
+// 让五个评分大类对应分别的数据表
 const NameHashTable = {
     "德育": "moral_edu",
     "智育": "intellectual_edu",
@@ -30,7 +31,7 @@ router.get("/test", function (req, res) {
 
 
 // @route GET api/manage/
-// @desc 返回是json数据
+// @desc 获取所有的部门管理信息
 // @access private
 router.get("/", passport.authenticate("jwt", {
     session: false
@@ -49,13 +50,14 @@ router.get("/", passport.authenticate("jwt", {
             return
         }
         data = ret
+        //  开始初始化数据
         for (let i = 0; i < data.length; i++) {
-            data[i].depart_man_user_id = []
-            data[i].depart_man_user_name = []
-            data[i].collage_man_user_id = []
-            data[i].collage_man_user_name = []
-            data[i].depart_man_user_studentid = []
-            data[i].collage_man_user_studentid = []
+            data[i].depart_man_user_id = [] // 部门管理员的id
+            data[i].depart_man_user_name = [] // 部门管理员的姓名
+            data[i].collage_man_user_id = [] // 学院管理员的id
+            data[i].collage_man_user_name = [] // 学院管理员的姓名
+            data[i].depart_man_user_studentid = [] // 部门管理员的学号
+            data[i].collage_man_user_studentid = [] // 学院管理员的学号
             depart_ids.push(data[i].depart_man_id)
             collage_ids.push(data[i].collage_man_id)
         }

@@ -19,6 +19,9 @@
               </span>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item command="info">个人信息</el-dropdown-item>
+                <el-dropdown-item command="changepwd"
+                  >修改密码</el-dropdown-item
+                >
                 <el-dropdown-item command="logout">退出登录</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
@@ -26,14 +29,23 @@
         </div>
       </el-col>
     </el-row>
+    <PwdDialog :dialog="dialog"></PwdDialog>
   </header>
 </template>
 
 
 
 <script>
+import PwdDialog from "../components/pwdDialog.vue";
 export default {
   name: "head-nav",
+  data() {
+    return {
+      dialog: {
+        show: false,
+      },
+    };
+  },
   computed: {
     user() {
       return this.$store.getters.user;
@@ -48,6 +60,9 @@ export default {
         case "logout":
           this.logout();
           break;
+        case "changepwd":
+          this.changepwd();
+          break;
       }
     },
     showInfoList() {
@@ -60,6 +75,15 @@ export default {
       // 跳转
       this.$router.push("/login");
     },
+    changepwd() {
+      console.log(111);
+      this.dialog = {
+        show: true,
+      };
+    },
+  },
+  components: {
+    PwdDialog,
   },
 };
 </script>
@@ -97,6 +121,13 @@ export default {
   text-align: right;
   float: right;
   padding-right: 10px;
+}
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  vertical-align: middle;
+  display: inline-block;
 }
 .welcome {
   display: inline-block;

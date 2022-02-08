@@ -22,7 +22,7 @@ router.get("/test", function (req, res) {
 
 
 // @route POST api/appeal/add
-// @desc  创建信息接口
+// @desc  添加申诉信息
 // @access private
 router.post("/add", passport.authenticate("jwt", {
     session: false
@@ -35,6 +35,7 @@ router.post("/add", passport.authenticate("jwt", {
         })
         return
     }
+    // 直接向数据库中插入
     let sql = "insert into appeal_table(act_id,act_name,act_type,user_id,user_name,reason) values(?,?,?,?,?,?);"
     let sqlParams = [req.body.act_id, req.body.act_name, req.body.act_type, req.user.id, req.user.name, req.body.reason]
     connection.query(sql, sqlParams, function (err, ret) {
@@ -55,11 +56,12 @@ router.post("/add", passport.authenticate("jwt", {
 
 
 // @route GET api/appeal/
-// @desc  获取所有信息
+// @desc  获取所有申诉信息
 // @access private
 router.get("/", passport.authenticate("jwt", {
     session: false
 }), function (req, res) {
+    // 查询数据库中所有的申诉信息
     let sql = "select * from appeal_table;"
     connection.query(sql, function (err, ret) {
         if (err) {
@@ -88,7 +90,7 @@ router.get("/", passport.authenticate("jwt", {
 
 
 // @route POST api/appeal/pass
-// @desc  通过申诉处理结果
+// @desc  申诉通过
 // @access private
 router.post("/pass", passport.authenticate("jwt", {
     session: false
@@ -119,7 +121,7 @@ router.post("/pass", passport.authenticate("jwt", {
 
 
 // @route POST api/appeal/reject
-// @desc  驳回申诉处理结果
+// @desc  申诉驳回
 // @access private
 router.post("/reject", passport.authenticate("jwt", {
     session: false

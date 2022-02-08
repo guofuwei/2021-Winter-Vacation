@@ -24,7 +24,7 @@ router.get("/test", function (req, res) {
 
 
 // @route POST api/activity/add
-// @desc  创建信息接口
+// @desc  添加活动
 // @access private
 router.post("/add", passport.authenticate("jwt", {
     session: false
@@ -36,6 +36,7 @@ router.post("/add", passport.authenticate("jwt", {
             msg: "非法请求"
         })
     }
+    // 开始进行时间转化为存入数据库做准备
     let starttime = moment(req.body.starttime).format('YYYY-MM-DD HH:mm:ss')
     let endtime = moment(req.body.endtime).format('YYYY-MM-DD HH:mm:ss')
     let sql = "insert into activity_table(name,type,initiator,thedescribe,starttime,endtime,place,maxnum) values(?,?,?,?,?,?,?,?);"
@@ -69,11 +70,12 @@ router.post("/add", passport.authenticate("jwt", {
 
 
 // @route GET api/activity/
-// @desc  获取所有信息
+// @desc  获取所有活动
 // @access private
 router.get("/", passport.authenticate("jwt", {
     session: false
 }), function (req, res) {
+    // 首先查询所有的活动
     let sql = "select * from activity_table;"
     connection.query(sql, function (err, ret) {
         if (err) {
@@ -93,6 +95,7 @@ router.get("/", passport.authenticate("jwt", {
             return
         }
         let data = ret
+        // 查询该用户已参加的活动，方便用于显示是否能参加（若已参加就不应再参加）
         sql = "select act_id from user_ref_act where user_id=?;"
         connection.query(sql, req.user.id, function (err, ret) {
             if (err) {
@@ -114,13 +117,13 @@ router.get("/", passport.authenticate("jwt", {
 })
 
 
-// @route GET api/activity/:id
-// @desc  获取某人报名的所有信息
+// @route GET api/activity/myact
+// @desc  获取某人参加的所有活动
 // @access private
 router.get("/myact", passport.authenticate("jwt", {
     session: false
 }), function (req, res) {
-    // console.log(req.user.id)
+    // 直接数据库查询该用户参加的所有活动
     let sql = "select activity_table.* from  user_table,activity_table,user_ref_act where user_table.id = user_ref_act.user_id and activity_table.id = user_ref_act.act_id and user_table.id=?;"
     connection.query(sql, req.user.id, function (err, ret) {
         if (err) {
@@ -148,13 +151,13 @@ router.get("/myact", passport.authenticate("jwt", {
 })
 
 
-// @route GET api/activity/:id
+// @route GET api/activity/myappact
 // @desc  获取某人组织的所有活动
 // @access private
 router.get("/myappact", passport.authenticate("jwt", {
     session: false
 }), function (req, res) {
-    // console.log(req.user.id)
+    // 查询该用户所组织的所有活动
     let sql = "select * from activity_table where initiator=?;"
     connection.query(sql, req.user.name, function (err, ret) {
         if (err) {
@@ -183,7 +186,7 @@ router.get("/myappact", passport.authenticate("jwt", {
 
 
 // @route POST api/activity/join
-// @desc  创建信息接口
+// @desc  某人参加活动
 // @access private
 router.post("/join", passport.authenticate("jwt", {
     session: false
@@ -195,6 +198,7 @@ router.post("/join", passport.authenticate("jwt", {
             msg: "非法请求"
         })
     }
+    // 直接向用户活动表中添加活动
     let sql = "insert into user_ref_act values(?,?);"
     let sqlParams = [req.user.id, req.body.id]
     connection.query(sql, sqlParams, function (err, ret) {
@@ -219,12 +223,14 @@ router.post("/join", passport.authenticate("jwt", {
 router.post("/audit/pass", passport.authenticate("jwt", {
     session: false
 }), function (req, res) {
+    // 检查字段是否为空 
     if (!req.body.id) {
         res.json({
             status: 10001,
             msg: "非法请求"
         })
     }
+    // 更新数据库信息，让活动审核通过
     let sql = "update activity_table set state='审核通过' where id=?;"
     connection.query(sql, req.body.id, function (err, ret) {
         if (err) {
@@ -255,6 +261,7 @@ router.post("/audit/fail", passport.authenticate("jwt", {
             msg: "非法请求"
         })
     }
+    // 更新数据库信息，让活动审核不通过
     let sql = "update activity_table set state='审核未通过' where id=?;"
     connection.query(sql, req.body.id, function (err, ret) {
         if (err) {

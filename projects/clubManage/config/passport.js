@@ -14,10 +14,11 @@ connection.connect(function (err) {
     }
 })
 
+// 这边使用了passport这个模块，对用户的状态进行检查，保证用户已登录
 module.exports = passport => {
     passport.use(new JwtStrategy(opts, function (jwt_payload, done) {
-        let sql = "select * from user_table where email=?"
-        connection.query(sql, jwt_payload.email, function (err, ret) {
+        let sql = "select * from user_table where studentid=?"
+        connection.query(sql, jwt_payload.studentid, function (err, ret) {
             if (err) {
                 console.log("passport jwt err:" + err)
                 return done(null, false)
@@ -26,6 +27,7 @@ module.exports = passport => {
                 console.log("无效的TOKEN")
                 return done(null, false)
             }
+            // 将用户的信息保存在req.user中，方便下次调用
             return done(null, ret[0])
         })
     }))
