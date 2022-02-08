@@ -27,8 +27,27 @@
           </div>
         </div>
       </el-col>
-      <el-col :span="12">
-        <div class="userinfo"></div>
+      <el-col :span="10">
+        <div class="userinfo">
+          <div class="user-item">
+            <span>总分:{{ scoreData[5] }}分</span>
+          </div>
+          <div class="user-item">
+            <span>德育:{{ scoreData[0] }}分</span>
+          </div>
+          <div class="user-item">
+            <span>智育:{{ scoreData[1] }}分</span>
+          </div>
+          <div class="user-item">
+            <span>体育:{{ scoreData[2] }}分</span>
+          </div>
+          <div class="user-item">
+            <span>美育:{{ scoreData[3] }}分</span>
+          </div>
+          <div class="user-item">
+            <span>劳育:{{ scoreData[4] }}分</span>
+          </div>
+        </div>
       </el-col>
     </el-row>
     <InfoDialog :dialog="dialog" :formData="formData"></InfoDialog>
@@ -44,17 +63,14 @@ export default {
     return {
       dialog: {
         show: false,
+        title: "",
       },
-      formData: {
-        id: "",
-        type: "",
-        mydescribe: "",
-        income: "",
-        expend: "",
-        cash: "",
-        remark: "",
-      },
+      formData: {},
+      scoreData: {},
     };
+  },
+  created() {
+    this.getProfile();
   },
   computed: {
     user() {
@@ -62,9 +78,15 @@ export default {
     },
   },
   methods: {
+    getProfile() {
+      this.$axios.get(`/api/score/scoreinfo`).then((res) => {
+        this.scoreData = res.data.data;
+      });
+    },
     changeInfo() {
       this.dialog = {
         show: true,
+        title: "修改个人信息",
       };
       this.formData = {
         name: this.user.name,
@@ -109,15 +131,22 @@ export default {
   font-size: 20px;
   font-weight: bold;
 }
+.userinfo span {
+  display: block;
+  text-align: left;
+  margin-top: 20px;
+  font-size: 20px;
+  font-weight: bold;
+}
 .userinfo {
-  height: 100%;
-  background-color: #eee;
+  position: relative;
+  top: 10%;
 }
 .user-item {
   position: relative;
   top: 30%;
   left: 10%;
-  padding: 26px;
+  padding: 20px;
   font-size: 20px;
   color: #333;
 }

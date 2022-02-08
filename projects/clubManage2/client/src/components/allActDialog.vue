@@ -81,38 +81,40 @@
               type="primary"
               v-if="dialog.option == 'audit'"
               @click="dialog.show = false"
-              >取 消</el-button
+              >取消</el-button
+            >
+            <el-button
+              type="success"
+              @click="newAppeal('form')"
+              v-if="dialog.option == 'myList'"
+              >发起申诉</el-button
             >
             <el-button
               type="primary"
               @click="dialog.show = false"
               v-if="dialog.option != 'audit'"
-              >确 定</el-button
+              >确定</el-button
             >
           </el-form-item>
         </el-form>
       </div>
     </el-dialog>
+    <NewAppealDialog
+      :appealDialog="appealDialog"
+      :formData="appealFormData"
+    ></NewAppealDialog>
   </div>
 </template>
 
 <script>
+import NewAppealDialog from "../components/newAppealDialog.vue";
 export default {
   name: "allactdialog",
   data() {
     return {
-      format_type_list: [
-        "思政教育",
-        "国防教育",
-        "安全教育",
-        "社会实践",
-        "志愿服务",
-        "文化活动",
-        "体育活动",
-        "学术活动",
-        "创新创业",
-      ],
       form_rules: {},
+      appealDialog: {},
+      appealFormData: {},
     };
   },
   props: {
@@ -166,6 +168,21 @@ export default {
         }
       });
     },
+    newAppeal(form) {
+      this.appealDialog = {
+        title: "申诉",
+        show: true,
+      };
+      this.appealFormData = {
+        act_id: this.formData.act_id,
+        act_name: this.formData.name,
+        act_type: this.formData.type,
+        reason: "",
+      };
+    },
+  },
+  components: {
+    NewAppealDialog,
   },
 };
 </script>

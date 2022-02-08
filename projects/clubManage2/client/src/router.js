@@ -13,6 +13,9 @@ import AppealList from "./views/appealList.vue"
 import Manage from "./views/manage.vue"
 import ActAudit from "./views/actAudit.vue"
 import ScoreRule from "./views/scoreRule.vue"
+import ActScore from "./views/actScore.vue"
+import GiveScore from "./views/giveScore"
+import MyScore from "./views/myScore.vue"
 
 
 
@@ -83,6 +86,21 @@ const routes = [{
         path: "/scoreRule",
         name: "scoreRule",
         component: ScoreRule
+      },
+      {
+        path: "/actScore",
+        name: "actScore",
+        component: ActScore
+      },
+      {
+        path: "/givescore",
+        name: "givescore",
+        component: GiveScore
+      },
+      {
+        path: "/myscore",
+        name: "myscore",
+        component: MyScore
       },
     ]
   },

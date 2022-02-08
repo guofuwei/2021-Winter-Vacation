@@ -61,6 +61,7 @@
           width="140"
         >
         </el-table-column>
+
         <el-table-column
           prop="type"
           label="活动类型"
@@ -68,12 +69,14 @@
           align="center"
         >
         </el-table-column>
+
         <el-table-column
-          prop="initiator"
-          label="活动发起人"
-          width="120"
+          prop="thedescribe"
+          label="活动描述"
+          width="140"
           align="center"
-        ></el-table-column>
+        >
+        </el-table-column>
 
         <el-table-column
           prop="starttime"
@@ -98,7 +101,7 @@
         </el-table-column>
 
         <el-table-column
-          label="活动详情"
+          label="打分详情"
           prop="operation"
           align="center"
           fixed="right"
@@ -115,7 +118,7 @@
       </el-table>
       <!-- 分页 -->
       <el-row v-if="tableData.length > 0">
-        <el-col :span="24" class="pageend">
+        <el-col :span="24">
           <div class="pagination">
             <el-pagination
               @size-change="handleSizeChange"
@@ -132,16 +135,10 @@
       </el-row>
       <el-card shadow="never" v-if="tableData.length == 0">暂无数据</el-card>
     </div>
-    <AllActDialog
-      :dialog="dialog"
-      @update="getProfile()"
-      :formData="formData"
-    ></AllActDialog>
   </div>
 </template>
 
 <script>
-import AllActDialog from "../components/allActDialog.vue";
 export default {
   name: "fundList",
   data() {
@@ -172,12 +169,6 @@ export default {
       },
       tableData: [],
       allTableData: [],
-      formData: {},
-      dialog: {
-        show: false,
-        title: "",
-        option: "edit",
-      },
     };
   },
   created() {
@@ -187,11 +178,12 @@ export default {
     getProfile() {
       // 获取表格数据
       this.$axios
-        .get("/api/activity/myact")
+        .get("/api/activity/myappact")
         .then((res) => {
           let time = "";
           let d = null;
           let getData = res.data.data;
+          // console.log(getData);
           for (let i = 0; i < getData.length; i++) {
             time = getData[i].starttime;
             d = new Date(time);
@@ -220,7 +212,6 @@ export default {
               d.getMinutes() +
               "分";
           }
-          // console.log(getData);
           this.allTableData = getData;
           this.filterTableData = getData;
           // 设置分页数据
@@ -231,24 +222,8 @@ export default {
         });
     },
     getDetails(index, row) {
-      this.dialog = {
-        show: true,
-        title: "详情",
-        option: "myList",
-      };
-      this.formData = {
-        act_id: row.id,
-        name: row.name,
-        type: row.type,
-        initiator: row.initiator,
-        thedescribe: row.thedescribe,
-        starttime: row.starttime,
-        endtime: row.endtime,
-        place: row.place,
-        maxnum: row.maxnum,
-        state: row.state,
-      };
-      console.log(this.formData);
+      let path = "/givescore?act_id=" + row.id + "&title=" + row.name;
+      this.$router.push(path);
     },
     handleDelete(index, row) {
       this.$axios.delete(`/api/profile/delete/${row.id}`).then((res) => {
@@ -262,16 +237,19 @@ export default {
     handleAdd() {
       this.dialog = {
         show: true,
-        title: "添加资金信息",
-        option: "add",
+        title: "申报活动",
+        option: "addAct",
       };
       this.formData = {
+        name: "",
         type: "",
-        mydescribe: "",
-        income: "",
-        expend: "",
-        cash: "",
-        remark: "",
+        initiator: this.allTableData[0].initiator,
+        thedescribe: "",
+        starttime: "",
+        endtime: "",
+        place: "",
+        maxnum: "",
+        state: "",
       };
     },
     handleSizeChange(page_size) {
@@ -336,12 +314,15 @@ export default {
       return this.$store.getters;
     },
   },
-  components: {
-    AllActDialog,
-  },
 };
 </script>
 <style scoped>
+.title {
+  margin-left: 10px;
+  font-size: 26px;
+  font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB",
+    "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
+}
 .fillcontain {
   width: 100%;
   height: 100%;
@@ -349,6 +330,7 @@ export default {
   box-sizing: border-box;
 }
 .btnRight {
+  margin-left: 30px;
   float: right;
 }
 .pagination {

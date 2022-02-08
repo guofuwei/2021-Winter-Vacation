@@ -26,7 +26,7 @@
               <span slot="title">个人信息</span>
             </el-menu-item>
           </router-link>
-          <router-link to="/infoshow">
+          <router-link to="/myscore">
             <el-menu-item index="2">
               <span slot="title">我的得分</span>
             </el-menu-item>
@@ -85,6 +85,10 @@ export default {
           {
             name: "活动申报",
             path: "addact",
+          },
+          {
+            name: "活动打分",
+            path: "actScore",
           },
           {
             name: "申诉处理",

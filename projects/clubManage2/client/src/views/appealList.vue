@@ -99,15 +99,19 @@
             <el-button
               size="mini"
               type="success"
-              @click="getDetails(scope.$index, scope.row)"
+              @click="onSubmit(scope.$index, scope.row, 1)"
+              v-if="tableData[scope.$index].state == ''"
               >通过</el-button
             >
             <el-button
               size="mini"
               type="danger"
-              @click="getDetails(scope.$index, scope.row)"
+              @click="onSubmit(scope.$index, scope.row, 2)"
+              v-if="tableData[scope.$index].state == ''"
               >驳回</el-button
             >
+            <span v-if="tableData[scope.$index].state == '通过'">已通过</span>
+            <span v-if="tableData[scope.$index].state == '驳回'">已驳回</span>
           </template>
         </el-table-column>
       </el-table>
@@ -130,16 +134,10 @@
       </el-row>
       <el-card shadow="never" v-if="tableData.length == 0">暂无数据</el-card>
     </div>
-    <!-- <Dialog
-      :dialog="dialog"
-      @update="getProfile()"
-      :formData="formData"
-    ></Dialog> -->
   </div>
 </template>
 
 <script>
-// import Dialog from "../components/myActDialog.vue";
 export default {
   name: "fundList",
   data() {
@@ -170,20 +168,6 @@ export default {
       },
       tableData: [],
       allTableData: [],
-      formData: {
-        id: "",
-        type: "",
-        mydescribe: "",
-        income: "",
-        expend: "",
-        cash: "",
-        remark: "",
-      },
-      dialog: {
-        show: false,
-        title: "",
-        option: "",
-      },
     };
   },
   created() {
@@ -223,24 +207,24 @@ export default {
           console.log(err);
         });
     },
-    getDetails(index, row) {
-      this.dialog = {
-        show: true,
-        title: "详情",
-        option: "allList",
+    onSubmit(index, row, type) {
+      let submitForm = {
+        act_id: row.act_id,
+        user_id: row.user_id,
       };
-      this.formData = {
-        name: row.name,
-        type: row.type,
-        initiator: row.initiator,
-        thedescribe: row.thedescribe,
-        starttime: row.starttime,
-        endtime: row.endtime,
-        place: row.place,
-        maxnum: row.maxnum,
-        state: row.state,
-      };
-      // console.log(row.id);
+      let path = "";
+      if (type == 1) {
+        path = "/api/appeal/pass";
+      } else {
+        path = "/api/appeal/reject";
+      }
+      this.$axios.post(path, submitForm).then((res) => {
+        this.$message({
+          message: "提交成功",
+          type: "success",
+        });
+        this.getProfile();
+      });
     },
     handleDelete(index, row) {
       this.$axios.delete(`/api/profile/delete/${row.id}`).then((res) => {
@@ -250,21 +234,6 @@ export default {
         });
         this.getProfile();
       });
-    },
-    handleAdd() {
-      this.dialog = {
-        show: true,
-        title: "添加资金信息",
-        option: "add",
-      };
-      this.formData = {
-        type: "",
-        mydescribe: "",
-        income: "",
-        expend: "",
-        cash: "",
-        remark: "",
-      };
     },
     handleSizeChange(page_size) {
       this.paginations.page_index = 1;
@@ -328,9 +297,6 @@ export default {
       return this.$store.getters;
     },
   },
-  // components: {
-  //   Dialog,
-  // },
 };
 </script>
 <style scoped>

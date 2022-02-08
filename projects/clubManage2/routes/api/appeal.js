@@ -28,14 +28,15 @@ router.post("/add", passport.authenticate("jwt", {
     session: false
 }), function (req, res) {
     // 检查字段是否为空 
-    if (!req.body.act_id || !req.body.act_name || !req.body.act_type || !req.body.user_id || !req.body.user_name || !req.body.reason) {
+    if (!req.body.act_id || !req.body.act_name || !req.body.act_type || !req.body.reason) {
         res.json({
             status: 10001,
             msg: "非法请求"
         })
+        return
     }
     let sql = "insert into appeal_table(act_id,act_name,act_type,user_id,user_name,reason) values(?,?,?,?,?,?);"
-    let sqlParams = [req.body.act_id, req.body.act_name, req.body.act_type, req.body.user_id, req.body.user_name, req.body.reason]
+    let sqlParams = [req.body.act_id, req.body.act_name, req.body.act_type, req.user.id, req.user.name, req.body.reason]
     connection.query(sql, sqlParams, function (err, ret) {
         if (err) {
             console.log("api/appeal/add mysql add err")
@@ -81,6 +82,68 @@ router.get("/", passport.authenticate("jwt", {
             status: 200,
             msg: "ok",
             data: ret
+        })
+    })
+})
+
+
+// @route POST api/appeal/pass
+// @desc  通过申诉处理结果
+// @access private
+router.post("/pass", passport.authenticate("jwt", {
+    session: false
+}), function (req, res) {
+    // 检查字段是否为空 
+    if (!req.body.act_id || !req.body.user_id) {
+        res.json({
+            status: 10001,
+            msg: "非法请求"
+        })
+    }
+    let sql = "update appeal_table set state='通过' where act_id=? and user_id=?"
+    connection.query(sql, [req.body.act_id, req.body.user_id], function (err, ret) {
+        if (err) {
+            console.log("api/appeal/pass mysql update err")
+            res.json({
+                status: 10002,
+                msg: "api/appeal/ mysql update err"
+            })
+            return
+        }
+        res.json({
+            status: 200,
+            msg: "ok",
+        })
+    })
+})
+
+
+// @route POST api/appeal/reject
+// @desc  驳回申诉处理结果
+// @access private
+router.post("/reject", passport.authenticate("jwt", {
+    session: false
+}), function (req, res) {
+    // 检查字段是否为空 
+    if (!req.body.act_id || !req.body.user_id) {
+        res.json({
+            status: 10001,
+            msg: "非法请求"
+        })
+    }
+    let sql = "update appeal_table set state='驳回' where act_id=? and user_id=?"
+    connection.query(sql, [req.body.act_id, req.body.user_id], function (err, ret) {
+        if (err) {
+            console.log("api/appeal/reject mysql update err")
+            res.json({
+                status: 10002,
+                msg: "api/appeal/ mysql update err"
+            })
+            return
+        }
+        res.json({
+            status: 200,
+            msg: "ok",
         })
     })
 })
