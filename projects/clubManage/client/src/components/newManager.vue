@@ -39,6 +39,18 @@
               v-if="newManageDialog.title == '新增学院管理员'"
               >新增学院管理员</el-button
             >
+            <el-button
+              type="primary"
+              @click="onSubmit2('form')"
+              v-if="newManageDialog.title == '编辑部门管理员'"
+              >编辑部门管理员</el-button
+            >
+            <el-button
+              type="primary"
+              @click="onSubmit2('form')"
+              v-if="newManageDialog.title == '编辑学院管理员'"
+              >编辑学院管理员</el-button
+            >
           </el-form-item>
         </el-form>
       </div>
@@ -74,6 +86,26 @@ export default {
               if (res.data.status == 200) {
                 this.$message({
                   message: "新增管理员成功",
+                  type: "success",
+                });
+                this.newManageDialog.show = false;
+                this.$router.go(0);
+              } else {
+                this.$message(res.data.msg);
+              }
+            });
+        }
+      });
+    },
+    onSubmit2(form) {
+      this.$refs[form].validate((valid) => {
+        if (valid) {
+          this.$axios
+            .post(`/api/manage/edit/manager`, this.formData)
+            .then((res) => {
+              if (res.data.status == 200) {
+                this.$message({
+                  message: "编辑管理员成功",
                   type: "success",
                 });
                 this.newManageDialog.show = false;

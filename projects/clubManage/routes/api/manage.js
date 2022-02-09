@@ -121,7 +121,7 @@ router.get("/", passport.authenticate("jwt", {
 
 
 // @route POST api/manage/add
-// @desc 返回是json数据
+// @desc  添加学院
 // @access private
 router.post("/add", passport.authenticate("jwt", {
     session: false
@@ -132,6 +132,7 @@ router.post("/add", passport.authenticate("jwt", {
             msg: "非法请求"
         })
     }
+    // 先查找是否有同名的学院
     let sql = "select * from collage_man where collage=?"
     connection.query(sql, [req.body.collage], function (err, ret) {
         if (err) {
@@ -149,6 +150,7 @@ router.post("/add", passport.authenticate("jwt", {
             })
             return
         } else {
+            // 当无同名的学院时，进行新学院的插入
             sql = "insert into collage_man values(0,?,?);"
             connection.query(sql, [req.body.depart_id, req.body.collage], function (err, ret) {
                 if (err) {
@@ -169,7 +171,7 @@ router.post("/add", passport.authenticate("jwt", {
 })
 
 // @route POST api/manage/add2
-// @desc 返回是json数据
+// @desc 新建部门
 // @access private
 router.post("/add2", passport.authenticate("jwt", {
     session: false
@@ -180,6 +182,7 @@ router.post("/add2", passport.authenticate("jwt", {
             msg: "非法请求"
         })
     }
+    // 同样查询有无同名的部门
     let sql = "select * from depart_man where department=?"
     connection.query(sql, [req.body.depart], function (err, ret) {
         if (err) {
@@ -197,6 +200,7 @@ router.post("/add2", passport.authenticate("jwt", {
             })
             return
         } else {
+            // 插入新部门
             sql = "insert into depart_man values(0,?);"
             connection.query(sql, [req.body.depart], function (err, ret) {
                 if (err) {
@@ -218,7 +222,7 @@ router.post("/add2", passport.authenticate("jwt", {
 
 
 // @route POST api/manage/delete/collage/:id
-// @desc 返回是json数据
+// @desc 删除学院
 // @access private
 router.delete("/delete/collage/:id", passport.authenticate("jwt", {
     session: false
@@ -242,11 +246,12 @@ router.delete("/delete/collage/:id", passport.authenticate("jwt", {
 
 
 // @route POST api/manage/delete/depart/:id
-// @desc 返回是json数据
+// @desc 删除部门（同时删除所属学院）
 // @access private
 router.delete("/delete/depart/:id", passport.authenticate("jwt", {
     session: false
 }), function (req, res) {
+    // 先删除所属的学院
     let sql = "delete from collage_man where depart_id=?"
     connection.query(sql, [req.params.id], function (err, ret) {
         if (err) {
@@ -257,6 +262,7 @@ router.delete("/delete/depart/:id", passport.authenticate("jwt", {
             })
             return
         }
+        // 删除该部门
         sql = "delete from depart_man where id=?"
         connection.query(sql, [req.params.id], function (err, ret) {
             if (err) {
@@ -280,11 +286,12 @@ router.delete("/delete/depart/:id", passport.authenticate("jwt", {
 
 
 // @route DELETE api/manage/delete1/:studentid
-// @desc 返回是json数据
+// @desc 删除部门管理员
 // @access private
 router.delete("/delete1/:studentid", passport.authenticate("jwt", {
     session: false
 }), function (req, res) {
+    // 更新部门管理员的数据
     let sql = "update user_table set depart_man_id=0 where studentid=?;"
     connection.query(sql, [req.params.studentid], function (err, ret) {
         if (err) {
@@ -305,7 +312,7 @@ router.delete("/delete1/:studentid", passport.authenticate("jwt", {
 
 
 // @route DELETE api/manage/delete2/:studentid
-// @desc 返回是json数据
+// @desc 删除学院管理员
 // @access private
 router.delete("/delete2/:studentid", passport.authenticate("jwt", {
     session: false
@@ -328,28 +335,6 @@ router.delete("/delete2/:studentid", passport.authenticate("jwt", {
 })
 
 
-// @route DELETE api/manage/delete2/:studentid
-// @desc 返回是json数据
-// @access private
-router.delete("/delete2/:studentid", passport.authenticate("jwt", {
-    session: false
-}), function (req, res) {
-    let sql = "update user_table set collage_man_id=0 where studentid=?;"
-    connection.query(sql, [req.params.studentid], function (err, ret) {
-        if (err) {
-            console.log("api/manage/delete1 mysql update err:" + err)
-            res.json({
-                status: 10002,
-                msg: "MYSQL manage update err"
-            })
-            return
-        }
-        res.json({
-            status: 200,
-            msg: ""
-        })
-    })
-})
 
 
 // @route POST api/manage/new/manager
@@ -384,6 +369,7 @@ router.post("/new/manager", passport.authenticate("jwt", {
             })
             return
         } else {
+            // 通过上传的数据判断是新增部门管理员还是学院管理员
             if (req.body.title === "新增部门管理员") {
                 sql = "update user_table set depart_man_id=? where studentid=?;"
                 man_id = req.body.depart_id
@@ -415,6 +401,191 @@ router.post("/new/manager", passport.authenticate("jwt", {
     })
 })
 
+
+// @route POST api/manage/edit/manager
+// @desc 编辑管理员(部门和学院)
+// @access private
+router.post("/edit/manager", passport.authenticate("jwt", {
+    session: false
+}), function (req, res) {
+    if (!req.body.title || !req.body.name || !req.body.studentid) {
+        res.status(200).json({
+            status: 10001,
+            msg: "非法请求"
+        })
+        return
+    }
+    let sql = "select * from user_table where name=? and studentid=?;"
+    let man_id = 0
+    // 验证学号与姓名是否匹配
+    connection.query(sql, [req.body.name, req.body.studentid], function (err, ret) {
+        if (err) {
+            console.log("api/manage/edit/manager mysql select err:" + err)
+            res.json({
+                status: 10002,
+                msg: "MYSQL manage select err"
+            })
+            return
+        }
+        if (ret == "") {
+            res.json({
+                status: 10016,
+                msg: "学号与姓名不相符"
+            })
+            return
+        } else {
+            // 通过上传的数据判断是编辑部门管理员还是学院管理员
+            // 删除老的管理员
+            if (req.body.title === "编辑部门管理员") {
+                sql = "update user_table set depart_man_id=0 where studentid=?;"
+            } else if (req.body.title === "编辑学院管理员") {
+                sql = "update user_table set collage_man_id=0 where studentid=?;"
+            } else {
+                res.status(200).json({
+                    status: 10001,
+                    msg: "非法请求"
+                })
+                return
+            }
+            connection.query(sql, [req.body.oldStudentid], function (err, ret) {
+                if (err) {
+                    console.log("api/manage/edit/manager mysql update err:" + err)
+                    res.json({
+                        status: 10002,
+                        msg: "MYSQL manage update err"
+                    })
+                    return
+                }
+
+                // 通过上传的数据判断是编辑部门管理员还是学院管理员
+                if (req.body.title === "编辑部门管理员") {
+                    sql = "update user_table set depart_man_id=? where studentid=?;"
+                    man_id = req.body.depart_id
+                } else if (req.body.title === "编辑学院管理员") {
+                    sql = "update user_table set collage_man_id=? where studentid=?;"
+                    man_id = req.body.collage_id
+                } else {
+                    res.status(200).json({
+                        status: 10001,
+                        msg: "非法请求"
+                    })
+                    return
+                }
+                connection.query(sql, [man_id, req.body.studentid], function (err, ret) {
+                    if (err) {
+                        console.log("api/manage/edit/manager mysql update err:" + err)
+                        res.json({
+                            status: 10002,
+                            msg: "MYSQL manage update err"
+                        })
+                        return
+                    }
+                    res.json({
+                        status: 200,
+                        msg: "ok"
+                    })
+                })
+            })
+        }
+    })
+})
+
+// @route POST api/manage/edit/departcollage
+// @desc 编辑部门和学院
+// @access private
+router.post("/edit/departcollage", passport.authenticate("jwt", {
+    session: false
+}), function (req, res) {
+    if (!req.body.depart_id) {
+        res.status(200).json({
+            status: 10001,
+            msg: "非法请求"
+        })
+        return
+    }
+    let sql = "select * from depart_man where department=? and id!=?"
+    connection.query(sql, [req.body.department, req.body.depart_id], function (err, ret) {
+        if (err) {
+            console.log("api/manage/edit/departcollage mysql select err:" + err)
+            res.json({
+                status: 10002,
+                msg: "MYSQL manage select err"
+            })
+            return
+        }
+        if (ret != "") {
+            res.json({
+                status: 10014,
+                msg: "该部门已存在"
+            })
+            return
+        } else {
+            sql = "update depart_man set department=? where id=?"
+            connection.query(sql, [req.body.department, req.body.depart_id], function (err, ret) {
+                if (err) {
+                    console.log("api/manage/edit/departcollage mysql update err:" + err)
+                    res.json({
+                        status: 10002,
+                        msg: "MYSQL manage update err"
+                    })
+                    return
+                }
+                if (req.body.collage_id) {
+                    let sql = "select * from collage_man where collage=? and id!=?"
+                    connection.query(sql, [req.body.collage, req.body.collage_id], function (err, ret) {
+                        if (err) {
+                            console.log("api/manage/edit/departcollage mysql select2 err:" + err)
+                            res.json({
+                                status: 10002,
+                                msg: "MYSQL manage select2 err"
+                            })
+                            return
+                        }
+                        if (ret != "") {
+                            res.json({
+                                status: 10014,
+                                msg: "该学院已存在"
+                            })
+                            return
+                        } else {
+                            sql = "update collage_man set collage=? where id=?"
+                            connection.query(sql, [req.body.collage, req.body.collage_id], function (err, ret) {
+                                if (err) {
+                                    console.log("api/manage/edit/departcollage mysql update2 err:" + err)
+                                    res.json({
+                                        status: 10002,
+                                        msg: "MYSQL manage update2 err"
+                                    })
+                                    return
+                                }
+                                res.json({
+                                    status: 200,
+                                    msg: "ok"
+                                })
+                            })
+                        }
+                    })
+                } else {
+                    sql = "insert into collage_man values(0,?,?);"
+                    connection.query(sql, [req.body.depart_id, req.body.collage], function (err, ret) {
+                        if (err) {
+                            console.log("api/manage/edit/departcollage mysql insert err:" + err)
+                            res.json({
+                                status: 10002,
+                                msg: "MYSQL manage insert err"
+                            })
+                            return
+                        }
+                        res.json({
+                            status: 200,
+                            msg: "ok"
+                        })
+                    })
+                }
+            })
+        }
+    })
+})
 
 
 

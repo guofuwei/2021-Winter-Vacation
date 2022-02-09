@@ -59,6 +59,12 @@
             <template slot-scope="scope">
               <el-button
                 size="mini"
+                type="primary"
+                @click="editDepartManager(scope.$index, scope.row)"
+                >编辑</el-button
+              >
+              <el-button
+                size="mini"
                 type="danger"
                 @click="deleteDepartMan(scope.$index, scope.row)"
                 >删除</el-button
@@ -93,6 +99,12 @@
           align="center"
         >
           <template slot-scope="scope">
+            <el-button
+              size="mini"
+              type="primary"
+              @click="editCollageManager(scope.$index, scope.row)"
+              >编辑</el-button
+            >
             <el-button
               size="mini"
               type="danger"
@@ -134,6 +146,36 @@ export default {
     manageData: Object,
   },
   methods: {
+    editDepartManager(index, row) {
+      this.newManageDialog = {
+        show: true,
+        title: "编辑部门管理员",
+      };
+      this.formData = {
+        depart_id: this.manageData.depart_id,
+        collage_id: this.manageData.collage_id,
+        title: "编辑部门管理员",
+        oldName: row.name,
+        oldStudentid: row.studentid,
+        name: row.name,
+        studentid: row.studentid,
+      };
+    },
+    editCollageManager(index, row) {
+      this.newManageDialog = {
+        show: true,
+        title: "编辑学院管理员",
+      };
+      this.formData = {
+        depart_id: this.manageData.depart_id,
+        collage_id: this.manageData.collage_id,
+        title: "编辑学院管理员",
+        oldName: row.name,
+        oldStudentid: row.studentid,
+        name: row.name,
+        studentid: row.studentid,
+      };
+    },
     deleteDepartMan(index, row) {
       this.$axios.delete(`/api/manage/delete1/${row.studentid}`).then((res) => {
         this.$message({

@@ -271,7 +271,7 @@ export default {
       this.formData = {
         name: "",
         type: "",
-        initiator: this.allTableData[0].initiator,
+        initiator: this.user.user.name,
         thedescribe: "",
         starttime: "",
         endtime: "",

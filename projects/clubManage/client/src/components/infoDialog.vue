@@ -46,7 +46,7 @@
             <el-input type="studentid" v-model="formData.studentid"></el-input>
           </el-form-item>
 
-          <el-form-item label="身份:">
+          <!-- <el-form-item label="身份:">
             <el-select v-model="formData.identity" placeholder="身份">
               <el-option
                 v-for="(formtype, index) in format_type_list"
@@ -56,7 +56,7 @@
               >
               </el-option>
             </el-select>
-          </el-form-item>
+          </el-form-item> -->
 
           <el-form-item class="text_right">
             <el-button type="primary" @click="onSubmit('form')"

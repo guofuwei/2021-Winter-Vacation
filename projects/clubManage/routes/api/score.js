@@ -30,14 +30,13 @@ router.get("/test", function (req, res) {
 
 
 // @route GET api/score/desc
-// @desc 返回是json数据
+// @desc 返回所有的得分规则信息
 // @access private
 router.get("/desc", passport.authenticate("jwt", {
     session: false
 }), function (req, res) {
-
     var data = []
-
+    // 查询德育信息
     let sql = "desc moral_edu;"
     connection.query(sql, function (err, ret) {
         if (err) {
@@ -61,7 +60,7 @@ router.get("/desc", passport.authenticate("jwt", {
         }
     })
 
-
+    // 查询智育信息
     sql = "desc intellectual_edu;"
     connection.query(sql, function (err, ret) {
         if (err) {
@@ -85,6 +84,7 @@ router.get("/desc", passport.authenticate("jwt", {
         }
     })
 
+    // 查询体育信息
     sql = "desc sports_edu;"
     connection.query(sql, function (err, ret) {
         if (err) {
@@ -108,7 +108,7 @@ router.get("/desc", passport.authenticate("jwt", {
         }
     })
 
-
+    // 查询美育信息
     sql = "desc aesthetic_edu;"
     connection.query(sql, function (err, ret) {
         if (err) {
@@ -132,6 +132,7 @@ router.get("/desc", passport.authenticate("jwt", {
         }
     })
 
+    // 查询劳育信息
     sql = "desc labor_edu;"
     connection.query(sql, function (err, ret) {
         if (err) {
@@ -161,7 +162,7 @@ router.get("/desc", passport.authenticate("jwt", {
 })
 
 // @route GET api/score/updateset
-// @desc 返回是json数据
+// @desc 更新评分规则
 // @access private
 router.post("/updateset", passport.authenticate("jwt", {
     session: false
@@ -177,6 +178,7 @@ router.post("/updateset", passport.authenticate("jwt", {
     let oldScoreType = ""
     let newScoreType = ""
     let Field = ""
+    // 首先查询旧的评分规则
     connection.query(sql, function (err, ret) {
         if (err) {
             console.log("api/score/updateset mysql desc err:" + err)
@@ -245,12 +247,11 @@ router.post("/updateset", passport.authenticate("jwt", {
 })
 
 // @route GET api/score/givescore
-// @desc 返回是json数据
+// @desc 打分数据的上传
 // @access private
 router.get("/givescore", passport.authenticate("jwt", {
     session: false
 }), function (req, res) {
-    // console.log("--------------")
     if (!req.query.act_id) {
         res.json({
             status: 10001,
@@ -273,12 +274,6 @@ router.get("/givescore", passport.authenticate("jwt", {
             return
         }
         data = ret
-        // res.json({
-        //     status: 200,
-        //     data: data
-        // })
-        // return
-        // // console.log(ret)
         sql = "desc moral_edu;"
         connection.query(sql, function (err, ret) {
             if (err) {
@@ -508,7 +503,7 @@ router.post("/newscore", passport.authenticate("jwt", {
 
 
 // @route GET api/score/myscore
-// @desc 新建打分数据
+// @desc 我的得分
 // @access private
 router.get("/myscore", passport.authenticate("jwt", {
     session: false
@@ -601,7 +596,7 @@ router.get("/scoreinfo", passport.authenticate("jwt", {
     session: false
 }), function (req, res) {
     let data = [0, 0, 0, 0, 0, 0]
-    let sql = "select * from user_act_score5_view where id=5;"
+    let sql = "select * from user_act_score5_view where id=?;"
     connection.query(sql, [req.user.id], function (err, ret) {
         if (err) {
             console.log("api/score/scoreinfo mysql select err:" + err)

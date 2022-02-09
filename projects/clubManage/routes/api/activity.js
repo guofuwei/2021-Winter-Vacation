@@ -250,7 +250,7 @@ router.post("/audit/pass", passport.authenticate("jwt", {
 
 
 // @route POST api/activity/audit/fail
-// @desc  活动审核通过
+// @desc  活动审核不通过
 // @access private
 router.post("/audit/fail", passport.authenticate("jwt", {
     session: false

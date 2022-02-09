@@ -111,6 +111,12 @@
             >
             <el-button
               size="mini"
+              type="primary"
+              @click="getDetails2(scope.$index, scope.row)"
+              >编辑部门/学院</el-button
+            >
+            <!-- <el-button
+              size="mini"
               type="danger"
               @click="handleDeleteDepart(scope.$index, scope.row)"
               >删除部门</el-button
@@ -120,7 +126,7 @@
               type="danger"
               @click="handleDeleteCollage(scope.$index, scope.row)"
               >删除学院</el-button
-            >
+            > -->
           </template>
         </el-table-column>
       </el-table>
@@ -154,12 +160,18 @@
       @update="getProfile()"
       :manageData="manageData"
     ></ManageDialog>
+    <DepartCollageDialog
+      :dialog="dialog3"
+      @update="getProfile()"
+      :departCollageData="departCollageData"
+    ></DepartCollageDialog>
   </div>
 </template>
 
 <script>
 import AddDepart from "../components/addDepart.vue";
 import ManageDialog from "../components/manageDialog.vue";
+import DepartCollageDialog from "../components/departCollageDialog.vue";
 export default {
   name: "fundList",
   data() {
@@ -196,11 +208,16 @@ export default {
         id1_list: [],
         id2_list: [],
       },
+      departCollageData: {},
       dialog: {
         show: false,
         title: "",
       },
       dialog2: {
+        show: false,
+        title: "",
+      },
+      dialog3: {
         show: false,
         title: "",
       },
@@ -290,7 +307,20 @@ export default {
       }
       this.manageData.collage_id = row.collage_man_id;
       this.manageData.depart_id = row.depart_man_id;
-      console.log(this.manageData);
+      // console.log(this.manageData);
+    },
+    getDetails2(index, row) {
+      this.dialog3 = {
+        show: true,
+        title: "编辑部门/学院",
+      };
+      this.departCollageData = {
+        depart_id: row.depart_man_id,
+        collage_id: row.collage_man_id,
+        department: row.department,
+        collage: row.collage,
+      };
+      // console.log(this.departCollageData);
     },
     handleDeleteCollage(index, row) {
       this.$axios
@@ -386,6 +416,7 @@ export default {
   components: {
     AddDepart,
     ManageDialog,
+    DepartCollageDialog,
   },
 };
 </script>

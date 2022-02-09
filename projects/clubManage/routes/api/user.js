@@ -234,7 +234,7 @@ router.post("/changeinfo", passport.authenticate("jwt", {
 
 
 // @route POST api/user/changepwd
-// @desc 返回是json数据
+// @desc 修改密码
 // @access private
 router.post("/changepwd", passport.authenticate("jwt", {
     session: false
