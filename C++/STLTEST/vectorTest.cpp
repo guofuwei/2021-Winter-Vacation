@@ -37,6 +37,7 @@ int main()
     showvector(v5);
     v5.clear(); //清除所有内容
     showvector(v5);
+    v5.back(); // 返回最后一个元素
 
     system("pause");
     return 0;
