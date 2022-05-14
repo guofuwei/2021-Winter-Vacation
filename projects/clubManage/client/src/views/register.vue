@@ -69,8 +69,8 @@
           <el-form-item label="身份" prop="identity">
             <el-select v-model="registerUser.identity" placeholder="请选择身份">
               <el-option label="普通学生" value="普通学生"> </el-option>
-              <el-option label="部门管理员" value="部门管理员"> </el-option>
-              <el-option label="系统管理员" value="系统管理员"> </el-option>
+              <!-- <el-option label="部门管理员" value="部门管理员"> </el-option> -->
+              <!-- <el-option label="系统管理员" value="系统管理员"> </el-option> -->
             </el-select>
           </el-form-item>
 

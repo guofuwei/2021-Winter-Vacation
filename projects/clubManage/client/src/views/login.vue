@@ -89,12 +89,12 @@ export default {
               // 登录成功
               // 拿到token
               // console.log(res);
-              localStorage.setItem("eleToken", res.data.token);
-              // 解析token
-              const decoded = jwtDecode(res.data.token);
-              // console.log(decoded);
-              this.$store.dispatch("setAuthenticated", !this.isEmpty(decoded));
-              this.$store.dispatch("setUser", decoded);
+                localStorage.setItem("eleToken", res.data.token);
+                // 解析token
+                const decoded = jwtDecode(res.data.token);
+                // console.log(decoded);
+                this.$store.dispatch("setAuthenticated", !this.isEmpty(decoded));
+                this.$store.dispatch("setUser", decoded);
             })
             .catch((err) => {
               console.error(err);

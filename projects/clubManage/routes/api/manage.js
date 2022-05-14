@@ -292,7 +292,7 @@ router.delete("/delete1/:studentid", passport.authenticate("jwt", {
     session: false
 }), function (req, res) {
     // 更新部门管理员的数据
-    let sql = "update user_table set depart_man_id=0 where studentid=?;"
+    let sql = "update user_table set depart_man_id=0,identity='普通学生' where studentid=?;"
     connection.query(sql, [req.params.studentid], function (err, ret) {
         if (err) {
             console.log("api/manage/delete1 mysql update err:" + err)
@@ -317,7 +317,7 @@ router.delete("/delete1/:studentid", passport.authenticate("jwt", {
 router.delete("/delete2/:studentid", passport.authenticate("jwt", {
     session: false
 }), function (req, res) {
-    let sql = "update user_table set collage_man_id=0 where studentid=?;"
+    let sql = "update user_table set collage_man_id=0,identity='普通学生' where studentid=?;"
     connection.query(sql, [req.params.studentid], function (err, ret) {
         if (err) {
             console.log("api/manage/delete1 mysql update err:" + err)
@@ -343,6 +343,7 @@ router.delete("/delete2/:studentid", passport.authenticate("jwt", {
 router.post("/new/manager", passport.authenticate("jwt", {
     session: false
 }), function (req, res) {
+    // console.log(req.body)
     if (!req.body.title || !req.body.name || !req.body.studentid) {
         res.status(200).json({
             status: 10001,
@@ -371,10 +372,10 @@ router.post("/new/manager", passport.authenticate("jwt", {
         } else {
             // 通过上传的数据判断是新增部门管理员还是学院管理员
             if (req.body.title === "新增部门管理员") {
-                sql = "update user_table set depart_man_id=? where studentid=?;"
+                sql = "update user_table set depart_man_id=?,identity='部门管理员' where studentid=?;"
                 man_id = req.body.depart_id
             } else if (req.body.title === "新增学院管理员") {
-                sql = "update user_table set collage_man_id=? where studentid=?;"
+                sql = "update user_table set collage_man_id=?,identity='部门管理员' where studentid=?;"
                 man_id = req.body.collage_id
             } else {
                 res.status(200).json({
@@ -383,7 +384,9 @@ router.post("/new/manager", passport.authenticate("jwt", {
                 })
                 return
             }
+            // console.log(sql, man_id, req.body.studentid)
             connection.query(sql, [man_id, req.body.studentid], function (err, ret) {
+                // console.log(ret)
                 if (err) {
                     console.log("api/manage/new/manager mysql update err:" + err)
                     res.json({

@@ -6,6 +6,8 @@ const connection = mysql.createConnection(config.mysqlConfig)
 connection.connect(function (err) {
     if (!err) {
         console.log("USER mysql connect success!")
+    } else {
+        console.log("mysql connect error:" + err)
     }
 })
 const bcrypt = require("bcrypt")

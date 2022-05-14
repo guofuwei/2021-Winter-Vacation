@@ -28,7 +28,10 @@ module.exports = passport => {
                 return done(null, false)
             }
             // 将用户的信息保存在req.user中，方便下次调用
+            // console.log(ret[0].studentid)
             return done(null, ret[0])
         })
     }))
 }
+
+//

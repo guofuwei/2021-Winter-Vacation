@@ -54,12 +54,14 @@ router.post("/add", passport.authenticate("jwt", {
         sql = "insert into user_ref_act values(?,?)"
         let actId = ret.insertId
         connection.query(sql, [req.user.id, actId], function (err, ret) {
-            console.log("api/activity/add mysql addjoin err:" + err)
-            res.json({
-                status: 10002,
-                msg: "MYSQL activity addjoin err"
-            })
-            return
+            if (err) {
+                console.log("api/activity/add mysql addjoin err:" + err)
+                res.json({
+                    status: 10002,
+                    msg: "MYSQL activity addjoin err"
+                })
+                return
+            }
         })
         res.json({
             status: 200,
@@ -67,6 +69,9 @@ router.post("/add", passport.authenticate("jwt", {
         })
     })
 })
+
+
+
 
 
 // @route GET api/activity/
@@ -207,6 +212,39 @@ router.post("/join", passport.authenticate("jwt", {
             res.json({
                 status: 10002,
                 msg: "MYSQL api/activity/join add err"
+            })
+            return
+        }
+        res.json({
+            status: 200,
+            msg: "ok"
+        })
+    })
+})
+
+
+// @route POST api/activity/cancelJoin
+// @desc  某人退出活动
+// @access private
+router.post("/cancelJoin", passport.authenticate("jwt", {
+    session: false
+}), function (req, res) {
+    // 检查字段是否为空 
+    if (!req.body.act_id) {
+        res.json({
+            status: 10001,
+            msg: "非法请求"
+        })
+    }
+    // 直接向用户活动表中删除活动
+    let sql = "delete from user_ref_act where user_id=? and act_id=?;"
+    let sqlParams = [req.user.id, req.body.act_id]
+    connection.query(sql, sqlParams, function (err, ret) {
+        if (err) {
+            console.log("api/activity/cancelJoin mysql delete err:" + err)
+            res.json({
+                status: 10002,
+                msg: "MYSQL api/activity/cancelJoin delete err"
             })
             return
         }
