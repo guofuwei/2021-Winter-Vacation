@@ -7,25 +7,32 @@ services:
     command: --default-authentication-plugin=mysql_native_password
     restart: always
     volumes:
-      - ./db/clubManage.sql:/docker-entrypoint-initdb.d
+      - ./db:/docker-entrypoint-initdb.d
       - club-data:/var/lib/mysql
+      - /etc/apt/sources.list:/etc/apt/sources.list
     environment:
       MYSQL_ROOT_PASSWORD: somepassword
       MYSQL_DATABASE: clubmanage
       MYSQL_USER: clubmanage
-      MYSQL_PASSWORD: clubmanage
+      MYSQL_PASSWORD: clubmanage 
 
   client:
     build: ./client
     networks:
       - clubmanage
     ports:
-      - 8080:8080
+      - 8080:80
+    volumes:
+      - ./client/nginx.conf:/etc/nginx/nginx.conf
+      - ./client/cors-nginx.conf:/etc/nginx/cors-nginx.conf
+      - /etc/apt/sources.list:/etc/apt/sources.list
     depends_on:
      - backend
 
   backend:
     build: ./backend
+    volumes:
+      - /etc/apt/sources.list:/etc/apt/sources.list
     networks:
       - clubmanage
     depends_on:

@@ -16,27 +16,27 @@ require("./config/passport")(passport)
 
 // 注册userRouter路由 
 const userRouter = require("./routes/api/user")
-app.use("/api/user", userRouter)
+app.use("/user", userRouter)
 
 // 注册activityRouter路由
 const activityRouter = require("./routes/api/activity")
-app.use("/api/activity", activityRouter)
+app.use("/activity", activityRouter)
 
 // 注册appealRouter路由
 const appealRouter = require("./routes/api/appeal")
-app.use("/api/appeal", appealRouter)
+app.use("/appeal", appealRouter)
 
 
 // 注册scoreRouter路由
 const scoreRouter = require("./routes/api/score")
-app.use("/api/score", scoreRouter)
+app.use("/score", scoreRouter)
 
 // 注册manageRouter路由
 const manageRouter = require("./routes/api/manage")
-app.use("/api/manage", manageRouter)
+app.use("/manage", manageRouter)
 
 // 启动服务器
-app.listen(PORT, () => {
+var server=app.listen(PORT, () => {
     var host = server.address().address
     var port = server.address().port
     console.log(`Server running on http://%s:%s`,host,port);
