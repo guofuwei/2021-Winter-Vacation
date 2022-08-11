@@ -1,6 +1,6 @@
 const express = require("express")
 const app = express()
-const port = 8888
+const PORT= 8888
 const passport = require("passport")
 
 // 使用bodyParser中间件
@@ -36,6 +36,8 @@ const manageRouter = require("./routes/api/manage")
 app.use("/api/manage", manageRouter)
 
 // 启动服务器
-app.listen(port, () => {
-    console.log(`Server running on port ${port}`);
+app.listen(PORT, () => {
+    var host = server.address().address
+    var port = server.address().port
+    console.log(`Server running on http://%s:%s`,host,port);
 })
