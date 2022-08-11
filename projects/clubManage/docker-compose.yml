@@ -1,0 +1,16 @@
+version: "3"
+services:
+  db:
+    image: mysql
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    volumes:
+      - "./clubManage.sql:/docker-entrypoint-initdb.d"
+      - "club-data:/var/lib/mysql"    
+    environment:
+      MYSQL_ROOT_PASSWORD: somepassword
+      MYSQL_DATABASE: clubmanage
+      MYSQL_USER: clubmanage
+      MYSQL_PASSWORD: clubmanage
+  
+    
